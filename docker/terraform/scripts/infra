@@ -58,7 +58,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
       ;;
     apply)
       terraform apply \
-        "core.tfplan"
+        "terraform.tfplan"
       ;;
     destroy)
       terraform destroy \
