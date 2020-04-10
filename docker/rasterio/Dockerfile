@@ -1,4 +1,4 @@
-FROM remotepixel/amazonlinux-gdal:2.4.0-light
+FROM globalforestwatch/amazonlinux-gdal:2.4.0-light
 
 WORKDIR /var/task/python
 ENV WORKDIR /var/task/python
