@@ -31,6 +31,7 @@ resource "aws_s3_bucket_object" "shapely_pyyaml" {
   key    = "lambda_layers/shapely_pyyaml.zip"
   source = "../docker/shapely_pyyaml/layer.zip"
   etag   = filemd5("../docker/shapely_pyyaml/layer.zip")
+
 }
 
 resource "aws_lambda_layer_version" "shapely_pyyaml" {
@@ -38,6 +39,7 @@ resource "aws_lambda_layer_version" "shapely_pyyaml" {
   s3_bucket           = aws_s3_bucket_object.shapely_pyyaml.bucket
   s3_key              = aws_s3_bucket_object.shapely_pyyaml.key
   compatible_runtimes = ["python3.7"]
+  source_code_hash    = filebase64sha256("../docker/shapely_pyyaml/layer.zip")
 }
 
 resource "aws_s3_bucket_object" "rasterio" {
@@ -52,4 +54,5 @@ resource "aws_lambda_layer_version" "rasterio" {
   s3_bucket           = aws_s3_bucket_object.rasterio.bucket
   s3_key              = aws_s3_bucket_object.rasterio.key
   compatible_runtimes = ["python3.6"]
+  source_code_hash    = filebase64sha256("../docker/rasterio/layer.zip")
 }

@@ -1,4 +1,4 @@
-FROM remotepixel/amazonlinux-gdal:2.4.0-light
+FROM globalforestwatch/amazonlinux-gdal:2.4.0-light
 
 WORKDIR /var/task/python
 ENV WORKDIR /var/task/python
@@ -13,7 +13,7 @@ RUN find -type d -a -name '__pycache__' -print0 | xargs -0 rm -rf
 RUN find -type f -a -name '*.py' -print0 | xargs -0 rm -f
 
 RUN cd /var/task && \
-    cat .lambdaignore | xargs zip -9qyr /var/task/layer.zip python lib/*.so* share -x
+    cat .lambdaignore | xargs zip -9qyr /var/task/layer.zip python lib/*.so* share bin/ogr2ogr -x
 #RUN cd /var/task; zip -r9q --symlinks /var/task/layer.zip
 #RUN cd /var/task; zip -r9q /var/task/layer.zip share
 
