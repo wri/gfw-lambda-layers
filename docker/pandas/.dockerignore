@@ -39,3 +39,4 @@ lambda.zip
 venv/
 venvpy/
 test/test_data/*
+terraform/.terraform

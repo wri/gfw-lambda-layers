@@ -53,6 +53,21 @@ resource "aws_lambda_layer_version" "rasterio" {
   layer_name          = substr("${local.project}-rasterio", 0, 64)
   s3_bucket           = aws_s3_bucket_object.rasterio.bucket
   s3_key              = aws_s3_bucket_object.rasterio.key
-  compatible_runtimes = ["python3.6"]
+  compatible_runtimes = ["python3.7"]
   source_code_hash    = filebase64sha256("../docker/rasterio/layer.zip")
+}
+
+resource "aws_s3_bucket_object" "pandas" {
+  bucket = data.terraform_remote_state.core.outputs.pipelines_bucket
+  key    = "lambda_layers/pandas.zip"
+  source = "../docker/pandas/layer.zip"
+  etag   = filemd5("../docker/pandas/layer.zip")
+}
+
+resource "aws_lambda_layer_version" "pandas" {
+  layer_name          = substr("${local.project}-pandas", 0, 64)
+  s3_bucket           = aws_s3_bucket_object.pandas.bucket
+  s3_key              = aws_s3_bucket_object.pandas.key
+  compatible_runtimes = ["python3.7"]
+  source_code_hash    = filebase64sha256("../docker/pandas/layer.zip")
 }
