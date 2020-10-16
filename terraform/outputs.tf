@@ -6,3 +6,7 @@ output "lambda_layer_shapely_pyyaml_arn" {
 output "lambda_layer_rasterio_arn" {
   value = aws_lambda_layer_version.rasterio.arn
 }
+
+output "lambda_layer_pandas_arn" {
+  value = aws_lambda_layer_version.pandas.arn
+}
