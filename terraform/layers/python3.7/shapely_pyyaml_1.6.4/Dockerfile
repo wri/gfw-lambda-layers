@@ -1,9 +1,8 @@
 FROM lambci/lambda:build-python3.7
 
-WORKDIR /var/task
-ENV WORKDIR /var/task
+ENV PREFIX=/opt
 
-WORKDIR $WORKDIR
+WORKDIR $PREFIX
 RUN mkdir -p python
 
 # Make the dir and to install all packages into packages/
