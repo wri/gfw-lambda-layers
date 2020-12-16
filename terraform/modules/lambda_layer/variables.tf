@@ -2,9 +2,9 @@ variable "bucket" { type = string }
 variable "name" { type = string }
 variable "runtime" { type = string }
 variable "module_version" { type = string }
-variable "layer_path" {type = string }
+variable "layer_path" { type = string }
 variable "name_suffix" {
-  type = string
+  type    = string
   default = ""
 }
 variable "hash_script" {

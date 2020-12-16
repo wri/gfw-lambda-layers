@@ -1,6 +1,7 @@
 locals {
   layer_name = substr("${var.runtime}-${var.name}_${var.module_version}${var.name_suffix}", 0, 64)
-  layer_path = var.layer_path.rstrip("/")
+  layer_path = trimsuffix(var.layer_path, "/")
+
 }
 
 data "local_file" "dockerfile" {
