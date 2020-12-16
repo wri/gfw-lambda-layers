@@ -26,6 +26,7 @@ module "py37_shapely_164" {
   module_version = "1.6.4"
   runtime        = "python3.7"
   name_suffix    = local.name_suffix
+  layer_path = "${path.root}/layers/python3.7/shapely_pyyaml_1.6.4/"
 }
 
 module "py37_rasterio_115" {
@@ -34,7 +35,7 @@ module "py37_rasterio_115" {
   name           = "rasterio"
   module_version = "1.1.5"
   runtime        = "python3.7"
-  name_suffix    = local.name_suffix
+  layer_path = "${path.root}/layers/python3.7/rasterio_1.1.5/"
 }
 
 module "py37_pandas_110" {
@@ -43,7 +44,7 @@ module "py37_pandas_110" {
   name           = "pandas"
   module_version = "1.1.0"
   runtime        = "python3.7"
-  name_suffix    = local.name_suffix
+  layer_path = "${path.root}/layers/python3.7/pandas_1.1.0/"
 }
 
 module "py38_rasterio_118" {
@@ -52,7 +53,7 @@ module "py38_rasterio_118" {
   name           = "rasterio"
   module_version = "1.1.8"
   runtime        = "python3.8"
-  name_suffix    = local.name_suffix
+  layer_path = "${path.root}/layers/python3.8/rasterio_1.1.8/"
 }
 
 module "py38_pillow_801" {
@@ -61,5 +62,5 @@ module "py38_pillow_801" {
   name           = "pillow"
   module_version = "8.0.1"
   runtime        = "python3.8"
-  name_suffix    = local.name_suffix
+  layer_path = "${path.root}/layers/python3.8/pillow_8.0.1/"
 }
