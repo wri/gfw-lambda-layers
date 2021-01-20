@@ -1,6 +1,5 @@
 # Require TF version to be same as or greater than 0.12.13
 terraform {
-  required_version = ">=0.12.13"
   backend "s3" {
     region         = "us-east-1"
     key            = "lambda-layers.tfstate"
@@ -8,13 +7,6 @@ terraform {
     encrypt        = true
   }
 }
-
-# Download any stable version in AWS provider of 2.36.0 or higher in 2.36 train
-provider "aws" {
-  region  = "us-east-1"
-  version = "~> 2.54.0"
-}
-
 
 
 data "terraform_remote_state" "core" {
@@ -26,48 +18,49 @@ data "terraform_remote_state" "core" {
   }
 }
 
-resource "aws_s3_bucket_object" "shapely_pyyaml" {
-  bucket = data.terraform_remote_state.core.outputs.pipelines_bucket
-  key    = "lambda_layers/shapely_pyyaml.zip"
-  source = "../docker/shapely_pyyaml/layer.zip"
-  etag   = filemd5("../docker/shapely_pyyaml/layer.zip")
 
+module "py37_shapely_164" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "shapely_pyyaml"
+  module_version = "1.6.4"
+  runtime        = "python3.7"
+  name_suffix    = local.name_suffix
+  layer_path     = "${path.root}/layers/python3.7/shapely_pyyaml_1.6.4/"
 }
 
-resource "aws_lambda_layer_version" "shapely_pyyaml" {
-  layer_name          = substr("${local.project}-shapely_pyyaml", 0, 64)
-  s3_bucket           = aws_s3_bucket_object.shapely_pyyaml.bucket
-  s3_key              = aws_s3_bucket_object.shapely_pyyaml.key
-  compatible_runtimes = ["python3.7"]
-  source_code_hash    = filebase64sha256("../docker/shapely_pyyaml/layer.zip")
+module "py37_rasterio_115" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "rasterio"
+  module_version = "1.1.5"
+  runtime        = "python3.7"
+  layer_path     = "${path.root}/layers/python3.7/rasterio_1.1.5/"
 }
 
-resource "aws_s3_bucket_object" "rasterio" {
-  bucket = data.terraform_remote_state.core.outputs.pipelines_bucket
-  key    = "lambda_layers/rasterio.zip"
-  source = "../docker/rasterio/layer.zip"
-  etag   = filemd5("../docker/rasterio/layer.zip")
+module "py37_pandas_110" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "pandas"
+  module_version = "1.1.0"
+  runtime        = "python3.7"
+  layer_path     = "${path.root}/layers/python3.7/pandas_1.1.0/"
 }
 
-resource "aws_lambda_layer_version" "rasterio" {
-  layer_name          = substr("${local.project}-rasterio", 0, 64)
-  s3_bucket           = aws_s3_bucket_object.rasterio.bucket
-  s3_key              = aws_s3_bucket_object.rasterio.key
-  compatible_runtimes = ["python3.7"]
-  source_code_hash    = filebase64sha256("../docker/rasterio/layer.zip")
+module "py38_rasterio_118" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "rasterio"
+  module_version = "1.1.8"
+  runtime        = "python3.8"
+  layer_path     = "${path.root}/layers/python3.8/rasterio_1.1.8/"
 }
 
-resource "aws_s3_bucket_object" "pandas" {
-  bucket = data.terraform_remote_state.core.outputs.pipelines_bucket
-  key    = "lambda_layers/pandas.zip"
-  source = "../docker/pandas/layer.zip"
-  etag   = filemd5("../docker/pandas/layer.zip")
-}
-
-resource "aws_lambda_layer_version" "pandas" {
-  layer_name          = substr("${local.project}-pandas", 0, 64)
-  s3_bucket           = aws_s3_bucket_object.pandas.bucket
-  s3_key              = aws_s3_bucket_object.pandas.key
-  compatible_runtimes = ["python3.7"]
-  source_code_hash    = filebase64sha256("../docker/pandas/layer.zip")
+module "py38_pillow_801" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "pillow"
+  module_version = "8.0.1"
+  runtime        = "python3.8"
+  layer_path     = "${path.root}/layers/python3.8/pillow_8.0.1/"
 }

@@ -2,14 +2,10 @@
 # Removed the  --without-sqlite3 options, which we need for GPKG
 FROM lambci/lambda:build-python3.7
 
+ENV PREFIX=/opt
 ENV \
   LANG=en_US.UTF-8 \
   LC_ALL=en_US.UTF-8
-
-RUN yum makecache fast
-RUN yum install -y automake16 libpng-devel nasm
-
-ENV PREFIX /var/task
 
 # versions of packages
 ENV \
@@ -24,6 +20,9 @@ ENV \
   CURL_VERSION=7.59.0 \
   NGHTTP2_VERSION=1.35.1 \
   GDAL_VERSION=3.0.1
+
+RUN yum makecache fast
+RUN yum install -y automake16 libpng-devel nasm
 
 # nghttp2
 RUN mkdir /tmp/nghttp2 \
@@ -183,21 +182,19 @@ ENV PATH=$PREFIX/bin:$PATH
 RUN pip3 install pip -U
 RUN pip3 install cython numpy --no-binary numpy
 
-WORKDIR /var/task/python
-ENV WORKDIR /var/task/python
+WORKDIR $PREFIX
 
-RUN mkdir -p $WORKDIR
-COPY docker/rasterio/.lambdaignore /var/task
-RUN CFLAGS="--std=c99" pip3 install rasterio[s3]~=1.1.5 shapely~=1.6.4.post2 pyproj~=2.1.3 --no-binary numpy,rasterio,shapely -t $WORKDIR -U
+RUN mkdir -p $PREFIX/python
+COPY .lambdaignore .
+RUN CFLAGS="--std=c99" pip3 install rasterio[s3]==1.1.5 shapely==1.6.4.post2 pyproj==2.1.3 --no-binary numpy,rasterio,shapely -t python -U
 
 RUN python -m compileall .
-RUN find -type f -name '*.pyc' | while read f; do n=$(echo $f | sed 's/__pycache__\///' | sed 's/.cpython-37//'); cp $f $n; done;
-RUN find -type d -a -name '__pycache__' -print0 | xargs -0 rm -rf
-RUN find -type f -a -name '*.py' -print0 | xargs -0 rm -f
+RUN find python/ -type f -name '*.pyc' | while read f; do n=$(echo $f | sed 's/__pycache__\///' | sed 's/.cpython-37//'); cp $f $n; done;
+RUN find python/ -type d -a -name '__pycache__' -print0 | xargs -0 rm -rf
+RUN find python/ -type f -a -name '*.py' -print0 | xargs -0 rm -f
 
-RUN cd /var/task && \
-    cat .lambdaignore | xargs zip -9qyr /var/task/layer.zip python share bin/ogr2ogr -x
-RUN cd /var/task && zip -r9q --symlinks /var/task/layer.zip lib/*.so*
+RUN cat .lambdaignore | xargs zip -9qyr layer.zip python share bin/ogr2ogr -x
+RUN zip -r9q --symlinks layer.zip lib/*.so*
 #RUN cd /var/task; zip -r9q /var/task/layer.zip share
 
 CMD ["/bin/bash"]

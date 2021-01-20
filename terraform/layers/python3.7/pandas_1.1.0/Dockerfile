@@ -1,16 +1,16 @@
 FROM lambci/lambda:build-python3.7
 
-WORKDIR /var/task
-ENV WORKDIR /var/task
+ENV WORKDIR=/opt
+ENV PANDAS_VERSION=1.1.0
 
 WORKDIR $WORKDIR
 RUN mkdir -p python
 
 # Make the dir and to install all packages into packages/
-COPY docker/shapely_pyyaml/.lambdaignore .
+COPY .lambdaignore .
 
 # installing dependencies to build package
-RUN pip install PyYAML~=5.2 shapely~=1.6.4.post2 -t python
+RUN pip install pandas==${PANDAS_VERSION} -t python
 
 #Precompile all python packages and remove .py files
 RUN python -m compileall .
