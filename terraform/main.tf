@@ -64,3 +64,13 @@ module "py38_pillow_801" {
   runtime        = "python3.8"
   layer_path     = "${path.root}/layers/python3.8/pillow_8.0.1/"
 }
+
+
+module "py38_mercantile_121" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "mercantile"
+  module_version = "1.2.1"
+  runtime        = "python3.8"
+  layer_path     = "${path.root}/layers/python3.8/mercantile_1.2.1/"
+}
