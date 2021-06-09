@@ -83,3 +83,13 @@ module "py38_mercantile_121" {
   runtime        = "python3.8"
   layer_path     = "${path.root}/layers/python3.8/mercantile_1.2.1/"
 }
+
+
+module "py38_fastapi_0652" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "fastapi"
+  module_version = "0.65.2"
+  runtime        = "python3.8"
+  layer_path     = "${path.root}/layers/python3.8/fastapi_0.65.2/"
+}
