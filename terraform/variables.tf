@@ -15,7 +15,6 @@ variable "aws_region" {
   description = "A valid AWS region to configure the underlying AWS SDK."
 }
 
-
 variable "application" {
   default     = "gfw-lambda-layers"
   type        = string
@@ -27,4 +26,3 @@ variable "dynamo_db_lock_table_name" {
   type        = string
   description = "Name of the lock table in Dynamo DB"
 }
-

@@ -17,7 +17,7 @@ RUN mkdir /opt/python \
 
 ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
-# install python and pip 3.8.1
+# install python and pip
 RUN wget https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz \
     && tar xzf Python-${PYTHON_VERSION}.tgz \
     && cd Python-${PYTHON_VERSION} \
@@ -35,7 +35,7 @@ RUN wget https://www.sqlite.org/snapshot/sqlite-snapshot-202002181949.tar.gz \
     && make install \
     && cd ..
 
-# install proj 6.3.1
+# install proj
 RUN wget https://github.com/OSGeo/PROJ/releases/download/${PROJ_VERSION}/proj-${PROJ_VERSION}.tar.gz \
     && tar xvzf proj-${PROJ_VERSION}.tar.gz \
     && cd proj-${PROJ_VERSION} \
@@ -44,7 +44,7 @@ RUN wget https://github.com/OSGeo/PROJ/releases/download/${PROJ_VERSION}/proj-${
     && make install \
     && cd ..
 
-# install gdal 3.0.4
+# install gdal
 RUN wget https://github.com/OSGeo/gdal/releases/download/v${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz \
     && tar xvzf gdal-${GDAL_VERSION}.tar.gz \
     && cd gdal-${GDAL_VERSION} \

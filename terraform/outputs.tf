@@ -1,3 +1,7 @@
+output "py37_fastapi_0652_arn" {
+  value = module.py37_fastapi_0652.layer_arn
+}
+
 output "py37_pandas_110_arn" {
   value = module.py37_pandas_110.layer_arn
 }
