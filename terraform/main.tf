@@ -56,6 +56,15 @@ module "py38_rasterio_118" {
   layer_path     = "${path.root}/layers/python3.8/rasterio_1.1.8/"
 }
 
+module "py38_rasterio_126" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "rasterio"
+  module_version = "1.2.6"
+  runtime        = "python3.8"
+  layer_path     = "${path.root}/layers/python3.8/rasterio_1.2.6/"
+}
+
 module "py38_pillow_801" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
@@ -74,6 +83,14 @@ module "py38_pillow_811" {
   layer_path     = "${path.root}/layers/python3.8/pillow_8.1.1/"
 }
 
+module "py38_pillow_831" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "pillow"
+  module_version = "8.3.1"
+  runtime        = "python3.8"
+  layer_path     = "${path.root}/layers/python3.8/pillow_8.3.1/"
+}
 
 module "py38_mercantile_121" {
   source         = "./modules/lambda_layer"
