@@ -1,7 +1,7 @@
 FROM lambci/lambda:build-python3.8
 
 ENV WORKDIR=/opt
-ENV PILLOW_VERSION=8.3.1
+ENV PILLOW_VERSION=8.1.1
 
 #ARG BUCKET
 #ARG KEY
