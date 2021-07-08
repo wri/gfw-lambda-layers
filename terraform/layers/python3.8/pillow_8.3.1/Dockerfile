@@ -1,10 +1,7 @@
 FROM lambci/lambda:build-python3.8
 
 ENV WORKDIR=/opt
-ENV PILLOW_VERSION=8.1.1
-
-#ARG BUCKET
-#ARG KEY
+ENV PILLOW_VERSION=8.3.1
 
 WORKDIR $WORKDIR
 RUN mkdir -p python
@@ -21,7 +18,3 @@ RUN find python/ -type f -a -name '*.py' -print0 | xargs -0 rm -f
 # zip and deploy package
 RUN cd /opt \
     && zip -r layer.zip *
-
-#RUN pip3.8 install awscli
-#CMD ["aws", "s3", "cp", "/opt/layer.zip", "s3://$BUCKET/$KEY"]
-

@@ -20,8 +20,17 @@ output "py38_pillow_811_arn" {
 }
 
 
+output "py38_pillow_831_arn" {
+  value = module.py38_pillow_831.layer_arn
+}
+
 output "py38_rasterio_118_arn" {
   value = module.py38_rasterio_118.layer_arn
+}
+
+
+output "py38_rasterio_126_arn" {
+  value = module.py38_rasterio_126.layer_arn
 }
 
 output "py38_mercantile_121_arn" {
