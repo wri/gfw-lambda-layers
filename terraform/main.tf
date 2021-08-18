@@ -47,6 +47,15 @@ module "py37_fastapi_0652" {
   layer_path     = "${path.root}/layers/python3.7/fastapi_0.65.2/"
 }
 
+module "py37_fastapi_0670" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "fastapi"
+  module_version = "0.67.0"
+  runtime        = "python3.7"
+  layer_path     = "${path.root}/layers/python3.7/fastapi_0.67.0/"
+}
+
 module "py37_pandas_110" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
@@ -63,6 +72,15 @@ module "py38_fastapi_0652" {
   module_version = "0.65.2"
   runtime        = "python3.8"
   layer_path     = "${path.root}/layers/python3.8/fastapi_0.65.2/"
+}
+
+module "py38_fastapi_0670" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "fastapi"
+  module_version = "0.67.0"
+  runtime        = "python3.8"
+  layer_path     = "${path.root}/layers/python3.8/fastapi_0.67.0/"
 }
 
 module "py38_rasterio_118" {
