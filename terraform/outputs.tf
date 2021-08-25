@@ -1,7 +1,3 @@
-output "py37_fastapi_0670_arn" {
-  value = module.py37_fastapi_0670.layer_arn
-}
-
 output "py37_pandas_110_arn" {
   value = module.py37_pandas_110.layer_arn
 }
@@ -14,8 +10,8 @@ output "py37_shapely_164_arn" {
   value = module.py37_shapely_164.layer_arn
 }
 
-output "py38_fastapi_0670_arn" {
-  value = module.py38_fastapi_0670.layer_arn
+output "py38_fastapi_0681_arn" {
+  value = module.py38_fastapi_0681.layer_arn
 }
 
 output "py38_mercantile_121_arn" {
@@ -38,6 +34,9 @@ output "py38_rasterio_118_arn" {
   value = module.py38_rasterio_118.layer_arn
 }
 
+output "py38_rasterio_123_arn" {
+  value = module.py38_rasterio_123.layer_arn
+}
 
 output "py38_rasterio_126_arn" {
   value = module.py38_rasterio_126.layer_arn
