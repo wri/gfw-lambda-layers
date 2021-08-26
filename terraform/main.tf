@@ -1,4 +1,3 @@
-# Require TF version to be same as or greater than 0.12.13
 terraform {
   backend "s3" {
     region         = "us-east-1"
@@ -63,15 +62,6 @@ module "py38_rasterio_118" {
   module_version = "1.1.8"
   runtime        = "python3.8"
   layer_path     = "${path.root}/layers/python3.8/rasterio_1.1.8/"
-}
-
-module "py38_rasterio_123" {
-  source = "./modules/lambda_layer"
-  bucket = data.terraform_remote_state.core.outputs.pipelines_bucket
-  name = "rasterio"
-  module_version = "1.2.3"
-  runtime = "python3.8"
-  layer_path = "${path.root}/layers/python3.8/rasterio_1.2.3/"
 }
 
 module "py38_rasterio_126" {
