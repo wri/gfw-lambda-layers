@@ -1,4 +1,3 @@
-# Require TF version to be same as or greater than 0.12.13
 terraform {
   backend "s3" {
     region         = "us-east-1"
@@ -47,6 +46,15 @@ module "py37_pandas_110" {
   layer_path     = "${path.root}/layers/python3.7/pandas_1.1.0/"
 }
 
+module "py38_fastapi_0681" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "fastapi"
+  module_version = "0.68.1"
+  runtime        = "python3.8"
+  layer_path     = "${path.root}/layers/python3.8/fastapi_0.68.1/"
+}
+
 module "py38_rasterio_118" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
@@ -63,6 +71,15 @@ module "py38_rasterio_126" {
   module_version = "1.2.6"
   runtime        = "python3.8"
   layer_path     = "${path.root}/layers/python3.8/rasterio_1.2.6/"
+}
+
+module "py38_rasterio_1210" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "rasterio"
+  module_version = "1.2.10"
+  runtime        = "python3.8"
+  layer_path     = "${path.root}/layers/python3.8/rasterio_1.2.10/"
 }
 
 module "py38_pillow_801" {
