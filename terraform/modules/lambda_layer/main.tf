@@ -15,7 +15,6 @@ data "external" "touch" {
 }
 
 
-
 # Build the Docker image and copy ZIP file to local folder
 resource "null_resource" "build" {
   triggers = {
@@ -45,5 +44,4 @@ resource "aws_lambda_layer_version" "default" {
   s3_key              = aws_s3_bucket_object.default.key
   compatible_runtimes = [var.runtime]
   source_code_hash    = filemd5(data.local_file.dockerfile.filename)
-
 }
