@@ -7,7 +7,6 @@ terraform {
   }
 }
 
-
 data "terraform_remote_state" "core" {
   backend = "s3"
   config = {
@@ -16,7 +15,6 @@ data "terraform_remote_state" "core" {
     key    = "core.tfstate"
   }
 }
-
 
 module "py37_shapely_164" {
   source         = "./modules/lambda_layer"
@@ -55,6 +53,15 @@ module "py38_fastapi_0681" {
   layer_path     = "${path.root}/layers/python3.8/fastapi_0.68.1/"
 }
 
+module "py38_fastapi_0810" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "fastapi"
+  module_version = "0.81.0"
+  runtime        = "python3.8"
+  layer_path     = "${path.root}/layers/python3.8/fastapi_0.81.0/"
+}
+
 module "py38_rasterio_118" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
@@ -82,6 +89,15 @@ module "py38_rasterio_1210" {
   layer_path     = "${path.root}/layers/python3.8/rasterio_1.2.10/"
 }
 
+module "py38_rasterio_132" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "rasterio"
+  module_version = "1.3.2"
+  runtime        = "python3.8"
+  layer_path     = "${path.root}/layers/python3.8/rasterio_1.3.2/"
+}
+
 module "py38_pillow_801" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
@@ -107,6 +123,15 @@ module "py38_pillow_831" {
   module_version = "8.3.1"
   runtime        = "python3.8"
   layer_path     = "${path.root}/layers/python3.8/pillow_8.3.1/"
+}
+
+module "py38_pillow_920" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "pillow"
+  module_version = "9.2.0"
+  runtime        = "python3.8"
+  layer_path     = "${path.root}/layers/python3.8/pillow_9.2.0/"
 }
 
 module "py38_mercantile_121" {
