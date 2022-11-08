@@ -1,7 +1,7 @@
 FROM lambci/lambda:build-python3.8
 
 ENV WORKDIR=/opt
-ENV PILLOW_VERSION=9.2.0
+ENV PILLOW_VERSION=9.3.0
 
 WORKDIR $WORKDIR
 RUN mkdir -p python
