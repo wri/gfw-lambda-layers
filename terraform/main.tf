@@ -80,13 +80,13 @@ module "py38_rasterio_1210" {
   layer_path     = "${path.root}/layers/python3.8/rasterio_1.2.10/"
 }
 
-module "py38_rasterio_133" {
+module "py38_rasterio_134" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
   name           = "rasterio"
-  module_version = "1.3.3"
+  module_version = "1.3.4"
   runtime        = "python3.8"
-  layer_path     = "${path.root}/layers/python3.8/rasterio_1.3.3/"
+  layer_path     = "${path.root}/layers/python3.8/rasterio_1.3.4/"
 }
 
 module "py38_pillow_801" {

@@ -46,6 +46,6 @@ output "py38_rasterio_1210_arn" {
   value = module.py38_rasterio_1210.layer_arn
 }
 
-output "py38_rasterio_133_arn" {
-  value = module.py38_rasterio_133.layer_arn
+output "py38_rasterio_134_arn" {
+  value = module.py38_rasterio_134.layer_arn
 }
