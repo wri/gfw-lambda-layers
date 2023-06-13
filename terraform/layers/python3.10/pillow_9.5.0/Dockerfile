@@ -1,4 +1,4 @@
-FROM lambci/lambda:build-python3.10
+FROM public.ecr.aws/lambda/python:3.10
 
 ENV WORKDIR=/opt
 ENV PILLOW_VERSION=9.5.0

@@ -1,4 +1,4 @@
-FROM lambci/lambda:build-python3.10
+FROM public.ecr.aws/lambda/python:3.10
 
 ENV WORKDIR=/opt
 ENV MERCANTILE_VERSION=1.2.1
