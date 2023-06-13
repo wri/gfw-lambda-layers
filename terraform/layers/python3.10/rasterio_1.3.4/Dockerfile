@@ -1,4 +1,4 @@
-FROM ghcr.io/lambgeo/lambda-gdal:3.5-python3.8
+FROM ghcr.io/lambgeo/lambda-gdal:3.6-python3.10
 
 ENV RASTERIO_VERSION=1.3.4
 

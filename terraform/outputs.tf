@@ -30,10 +30,6 @@ output "py38_pillow_831_arn" {
   value = module.py38_pillow_831.layer_arn
 }
 
-output "py38_pillow_930_arn" {
-  value = module.py38_pillow_930.layer_arn
-}
-
 output "py38_rasterio_118_arn" {
   value = module.py38_rasterio_118.layer_arn
 }
@@ -46,6 +42,14 @@ output "py38_rasterio_1210_arn" {
   value = module.py38_rasterio_1210.layer_arn
 }
 
-output "py38_rasterio_134_arn" {
-  value = module.py38_rasterio_134.layer_arn
+output "py310_mercantile_121_arn" {
+  value = module.py310_mercantile_121.layer_arn
+}
+
+output "py310_pillow_950_arn" {
+  value = module.py310_pillow_950.layer_arn
+}
+
+output "py310_rasterio_134_arn" {
+  value = module.py310_rasterio_134.layer_arn
 }

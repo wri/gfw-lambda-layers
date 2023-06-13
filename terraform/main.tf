@@ -80,15 +80,6 @@ module "py38_rasterio_1210" {
   layer_path     = "${path.root}/layers/python3.8/rasterio_1.2.10/"
 }
 
-module "py38_rasterio_134" {
-  source         = "./modules/lambda_layer"
-  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
-  name           = "rasterio"
-  module_version = "1.3.4"
-  runtime        = "python3.8"
-  layer_path     = "${path.root}/layers/python3.8/rasterio_1.3.4/"
-}
-
 module "py38_pillow_801" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
@@ -116,20 +107,29 @@ module "py38_pillow_831" {
   layer_path     = "${path.root}/layers/python3.8/pillow_8.3.1/"
 }
 
-module "py38_pillow_930" {
+module "py310_pillow_950" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
   name           = "pillow"
-  module_version = "9.3.0"
-  runtime        = "python3.8"
-  layer_path     = "${path.root}/layers/python3.8/pillow_9.3.0/"
+  module_version = "9.5.0"
+  runtime        = "python3.10"
+  layer_path     = "${path.root}/layers/python3.10/pillow_9.5.0/"
 }
 
-module "py38_mercantile_121" {
+module "py310_mercantile_121" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
   name           = "mercantile"
   module_version = "1.2.1"
-  runtime        = "python3.8"
-  layer_path     = "${path.root}/layers/python3.8/mercantile_1.2.1/"
+  runtime        = "python3.10"
+  layer_path     = "${path.root}/layers/python3.10/mercantile_1.2.1/"
+}
+
+module "py310_rasterio_134" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "rasterio"
+  module_version = "1.3.4"
+  runtime        = "python3.10"
+  layer_path     = "${path.root}/layers/python3.10/rasterio_1.3.4/"
 }
