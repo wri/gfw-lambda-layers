@@ -46,10 +46,18 @@ output "py310_mercantile_121_arn" {
   value = module.py310_mercantile_121.layer_arn
 }
 
+#output "py310_pandas_153_arn" {
+#  value = module.py310_pandas_153.layer_arn
+#}
+
 output "py310_pillow_950_arn" {
   value = module.py310_pillow_950.layer_arn
 }
 
-output "py310_rasterio_134_arn" {
-  value = module.py310_rasterio_134.layer_arn
+output "py310_rasterio_137_arn" {
+  value = module.py310_rasterio_137.layer_arn
 }
+
+#output "py310_shapely_201_arn" {
+#  value = module.py310_shapely_201.layer_arn
+#}

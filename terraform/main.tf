@@ -116,15 +116,6 @@ module "py38_pillow_831" {
   layer_path     = "${path.root}/layers/python3.8/pillow_8.3.1/"
 }
 
-module "py310_pillow_950" {
-  source         = "./modules/lambda_layer"
-  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
-  name           = "pillow"
-  module_version = "9.5.0"
-  runtime        = "python3.10"
-  layer_path     = "${path.root}/layers/python3.10/pillow_9.5.0/"
-}
-
 module "py310_mercantile_121" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
@@ -134,11 +125,39 @@ module "py310_mercantile_121" {
   layer_path     = "${path.root}/layers/python3.10/mercantile_1.2.1/"
 }
 
-module "py310_rasterio_134" {
+#module "py310_pandas_202" {
+#  source         = "./modules/lambda_layer"
+#  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+#  name           = "pandas"
+#  module_version = "2.0.2"
+#  runtime        = "python3.10"
+#  layer_path     = "${path.root}/layers/python3.10/pandas_2.0.2/"
+#}
+
+module "py310_pillow_950" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "pillow"
+  module_version = "9.5.0"
+  runtime        = "python3.10"
+  layer_path     = "${path.root}/layers/python3.10/pillow_9.5.0/"
+}
+
+module "py310_rasterio_137" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
   name           = "rasterio"
-  module_version = "1.3.4"
+  module_version = "1.3.7"
   runtime        = "python3.10"
-  layer_path     = "${path.root}/layers/python3.10/rasterio_1.3.4/"
+  layer_path     = "${path.root}/layers/python3.10/rasterio_1.3.7/"
 }
+
+#module "py310_shapely_201" {
+#  source         = "./modules/lambda_layer"
+#  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+#  name           = "shapely"
+#  module_version = "2.0.1"
+#  runtime        = "python3.10"
+#  name_suffix    = local.name_suffix
+#  layer_path     = "${path.root}/layers/python3.10/shapely_2.0.1/"
+#}
