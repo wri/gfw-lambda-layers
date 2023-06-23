@@ -9,6 +9,8 @@ RUN mkdir -p python
 # Install dependencies to build package
 RUN pip3.10 install mercantile==${MERCANTILE_VERSION} -t python
 
+RUN yum install -y zip
+
 #Precompile all python packages and remove .py files
 RUN python -m compileall .
 RUN find python/ -type f -name '*.pyc' | while read f; do n=$(echo $f | sed 's/__pycache__\///' | sed 's/.cpython-310//'); cp $f $n; done;
