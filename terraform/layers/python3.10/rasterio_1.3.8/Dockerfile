@@ -1,6 +1,6 @@
 FROM ghcr.io/lambgeo/lambda-gdal:3.6-python3.10
 
-ENV RASTERIO_VERSION=1.3.7
+ENV RASTERIO_VERSION=1.3.8
 
 ENV PACKAGE_PREFIX=/opt
 

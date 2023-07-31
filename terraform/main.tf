@@ -143,13 +143,13 @@ module "py310_pillow_950" {
   layer_path     = "${path.root}/layers/python3.10/pillow_9.5.0/"
 }
 
-module "py310_rasterio_137" {
+module "py310_rasterio_138" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
   name           = "rasterio"
-  module_version = "1.3.7"
+  module_version = "1.3.8"
   runtime        = "python3.10"
-  layer_path     = "${path.root}/layers/python3.10/rasterio_1.3.7/"
+  layer_path     = "${path.root}/layers/python3.10/rasterio_1.3.8/"
 }
 
 #module "py310_shapely_201" {
