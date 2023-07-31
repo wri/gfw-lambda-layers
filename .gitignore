@@ -13,6 +13,9 @@
 # .tfplan files
 *.tfplan
 
+# Mac files
+**/.DS_Store
+
 # Crash log files
 crash.log
 
