@@ -125,15 +125,6 @@ module "py310_mercantile_121" {
   layer_path     = "${path.root}/layers/python3.10/mercantile_1.2.1/"
 }
 
-#module "py310_pandas_202" {
-#  source         = "./modules/lambda_layer"
-#  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
-#  name           = "pandas"
-#  module_version = "2.0.2"
-#  runtime        = "python3.10"
-#  layer_path     = "${path.root}/layers/python3.10/pandas_2.0.2/"
-#}
-
 module "py310_pillow_950" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
@@ -151,13 +142,3 @@ module "py310_rasterio_138" {
   runtime        = "python3.10"
   layer_path     = "${path.root}/layers/python3.10/rasterio_1.3.8/"
 }
-
-#module "py310_shapely_201" {
-#  source         = "./modules/lambda_layer"
-#  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
-#  name           = "shapely"
-#  module_version = "2.0.1"
-#  runtime        = "python3.10"
-#  name_suffix    = local.name_suffix
-#  layer_path     = "${path.root}/layers/python3.10/shapely_2.0.1/"
-#}
