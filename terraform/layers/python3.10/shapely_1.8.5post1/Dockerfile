@@ -1,4 +1,4 @@
-FROM ghcr.io/lambgeo/lambda-gdal:3.6-python3.10
+FROM public.ecr.aws/lambda/python:3.10
 
 ENV SHAPELY_VERSION="1.8.5.post1"
 ENV PYAML_VERSION="5.2"

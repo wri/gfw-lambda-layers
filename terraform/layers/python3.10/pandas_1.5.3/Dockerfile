@@ -1,4 +1,4 @@
-FROM ghcr.io/lambgeo/lambda-gdal:3.6-python3.10
+FROM public.ecr.aws/lambda/python:3.10
 
 ENV WORKDIR=/opt
 ENV PANDAS_VERSION=1.5.3
