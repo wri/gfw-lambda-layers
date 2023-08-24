@@ -44,6 +44,15 @@ module "py37_pandas_110" {
   layer_path     = "${path.root}/layers/python3.7/pandas_1.1.0/"
 }
 
+module "py38_mercantile_121" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "mercantile"
+  module_version = "1.2.1"
+  runtime        = "python3.8"
+  layer_path     = "${path.root}/layers/python3.8/mercantile_1.2.1/"
+}
+
 module "py38_rasterio_1210" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
