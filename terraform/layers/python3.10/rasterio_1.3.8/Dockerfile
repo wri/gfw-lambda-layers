@@ -4,8 +4,10 @@ ENV RASTERIO_VERSION=1.3.8
 
 ENV PACKAGE_PREFIX=/opt
 
-# Install some requirements to `/var/task` (using `-t` option)
-RUN pip install rasterio==${RASTERIO_VERSION} --no-binary :all: -t ${PACKAGE_PREFIX}/python
+# Install rasterio from source because the binary pulls in its own GDAL
+# subset, and we already have it. Otherwise install binary packages,
+# because they tend to be smaller than those you build yourself.
+RUN pip install rasterio==${RASTERIO_VERSION} --no-binary rasterio -t ${PACKAGE_PREFIX}/python
 
 # Reduce size of the C libs
 RUN cd $PACKAGE_PREFIX && find lib -name \*.so\* -exec strip {} \;
