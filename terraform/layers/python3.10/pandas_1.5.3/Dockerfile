@@ -1,15 +1,12 @@
 FROM public.ecr.aws/lambda/python:3.10
 
-ENV WORKDIR=/opt
 ENV PANDAS_VERSION=1.5.3
 
-WORKDIR $WORKDIR
+WORKDIR /opt
 RUN mkdir -p python
 
-# Make the dir and to install all packages into packages/
 COPY .lambdaignore .
 
-# Install dependencies to build package
 RUN pip install pandas==${PANDAS_VERSION} -t python
 
 RUN yum install -y zip
