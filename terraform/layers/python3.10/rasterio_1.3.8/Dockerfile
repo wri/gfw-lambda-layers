@@ -11,11 +11,12 @@ RUN mkdir -p python
 RUN pip install rasterio==${RASTERIO_VERSION} --no-binary rasterio -t python
 
 # Reduce size of the C libs
+# TODO: Try stripping bin as well?
 RUN find lib -name \*.so\* -exec strip {} \;
 
+# Compress all source codes except files listed in .lambdaignore
 RUN yum install -y zip
-
-# Create layer.zip
-RUN zip -r9q layer.zip python && \
-    zip -r9q --symlinks layer.zip lib/*.so* share && \
+COPY .lambdaignore .
+RUN cat .lambdaignore | xargs zip -r9q layer.zip python -x && \
+    cat .lambdaignore | xargs zip -r9q --symlinks layer.zip lib/*.so* share -x && \
     zip -r9q --symlinks layer.zip bin/gdal* bin/ogr* bin/geos* bin/nearblack
