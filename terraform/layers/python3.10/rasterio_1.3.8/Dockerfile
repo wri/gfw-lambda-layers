@@ -2,18 +2,21 @@ FROM ghcr.io/lambgeo/lambda-gdal:3.6-python3.10
 
 ENV RASTERIO_VERSION=1.3.8
 
-ENV PACKAGE_PREFIX=/opt
+WORKDIR /opt
+RUN mkdir -p python
 
-# Install some requirements to `/var/task` (using `-t` option)
-RUN pip install rasterio==${RASTERIO_VERSION} --no-binary :all: -t ${PACKAGE_PREFIX}/python
+# Install rasterio from source because the binary pulls in its own GDAL
+# subset, and we already have it. Otherwise install binary packages,
+# because they tend to be smaller than those you build yourself.
+RUN pip install rasterio==${RASTERIO_VERSION} --no-binary rasterio -t python
 
 # Reduce size of the C libs
-RUN cd $PACKAGE_PREFIX && find lib -name \*.so\* -exec strip {} \;
+# TODO: Try stripping bin as well?
+RUN find lib -name \*.so\* -exec strip {} \;
 
+# Compress all source codes except files listed in .lambdaignore
 RUN yum install -y zip
-
-# Create layer.zip
-RUN cd $PACKAGE_PREFIX && \
-    zip -r9q /opt/layer.zip python && \
-    zip -r9q --symlinks /opt/layer.zip lib/*.so* share && \
-    zip -r9q --symlinks /opt/layer.zip bin/gdal* bin/ogr* bin/geos* bin/nearblack
+COPY .lambdaignore .
+RUN cat .lambdaignore | xargs zip -r9q layer.zip python -x && \
+    cat .lambdaignore | xargs zip -r9q --symlinks layer.zip lib/*.so* share -x && \
+    zip -r9q --symlinks layer.zip bin/gdal* bin/ogr* bin/geos* bin/nearblack
