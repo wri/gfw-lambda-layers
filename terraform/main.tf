@@ -44,15 +44,6 @@ module "py37_pandas_110" {
   layer_path     = "${path.root}/layers/python3.7/pandas_1.1.0/"
 }
 
-module "py38_fastapi_0681" {
-  source         = "./modules/lambda_layer"
-  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
-  name           = "fastapi"
-  module_version = "0.68.1"
-  runtime        = "python3.8"
-  layer_path     = "${path.root}/layers/python3.8/fastapi_0.68.1/"
-}
-
 module "py38_mercantile_121" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
@@ -62,24 +53,6 @@ module "py38_mercantile_121" {
   layer_path     = "${path.root}/layers/python3.8/mercantile_1.2.1/"
 }
 
-module "py38_rasterio_118" {
-  source         = "./modules/lambda_layer"
-  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
-  name           = "rasterio"
-  module_version = "1.1.8"
-  runtime        = "python3.8"
-  layer_path     = "${path.root}/layers/python3.8/rasterio_1.1.8/"
-}
-
-module "py38_rasterio_126" {
-  source         = "./modules/lambda_layer"
-  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
-  name           = "rasterio"
-  module_version = "1.2.6"
-  runtime        = "python3.8"
-  layer_path     = "${path.root}/layers/python3.8/rasterio_1.2.6/"
-}
-
 module "py38_rasterio_1210" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
@@ -87,24 +60,6 @@ module "py38_rasterio_1210" {
   module_version = "1.2.10"
   runtime        = "python3.8"
   layer_path     = "${path.root}/layers/python3.8/rasterio_1.2.10/"
-}
-
-module "py38_pillow_801" {
-  source         = "./modules/lambda_layer"
-  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
-  name           = "pillow"
-  module_version = "8.0.1"
-  runtime        = "python3.8"
-  layer_path     = "${path.root}/layers/python3.8/pillow_8.0.1/"
-}
-
-module "py38_pillow_811" {
-  source         = "./modules/lambda_layer"
-  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
-  name           = "pillow"
-  module_version = "8.1.1"
-  runtime        = "python3.8"
-  layer_path     = "${path.root}/layers/python3.8/pillow_8.1.1/"
 }
 
 module "py38_pillow_831" {
