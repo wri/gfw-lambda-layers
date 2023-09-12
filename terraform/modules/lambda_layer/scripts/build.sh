@@ -2,8 +2,6 @@
 
 set -e
 
-GIT_SHA="$(git rev-parse HEAD | cut -c 1-8)"
-
 LAYER_PATH=${1}
 IMAGE="globalforestwatch/${2}"
 
@@ -14,7 +12,7 @@ CONTAINER_NAME=container_"$(sha1sum ${LAYER_PATH}/foo.txt |cut -c 1-8)"
 pushd "${LAYER_PATH}"
 
 echo "BUILD image ${IMAGE}"
-docker build --no-cache -t "${IMAGE}":"${GIT_SHA}"  .
+docker build --no-cache -t "${IMAGE}"  .
 
 echo "CREATE container ${CONTAINER_NAME}"
 docker run --name ${CONTAINER_NAME} -itd "${IMAGE}":"${GIT_SHA}" /bin/bash
