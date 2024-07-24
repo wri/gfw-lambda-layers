@@ -34,6 +34,7 @@ module "py310_pandas_153" {
   layer_path     = "${path.root}/layers/python3.10/pandas_1.5.3/"
 }
 
+# Includes geopandas v1.0.1
 module "py310_pandas_214" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
