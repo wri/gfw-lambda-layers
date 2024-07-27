@@ -1,6 +1,5 @@
 *-info/*
 */tests/*
-lib/libhdf5*
 python/awscli/examples/*
 python/boto3/*
 python/botocore/*
@@ -14,10 +13,13 @@ python/future/tests/*
 python/jmespath/*
 python/jsonschema/tests/*
 python/numpy*
-python/numpy/*
+python/packaging/*
+python/pandas.libs/*
+python/pandas/*
 python/past/tests/*
 python/pip/*
 python/pkg_resources/*
+python/pytz/*
 python/regex/test/*
 python/s3transfer/*
 python/samcli/local/init/templates/cookiecutter-aws-sam-hello-dotnet/*
@@ -29,11 +31,12 @@ python/samcli/local/init/templates/cookiecutter-aws-sam-hello-nodejs6/*
 python/samcli/local/init/templates/cookiecutter-aws-sam-hello-python/{{cookiecutter.project_name}}/tests/*
 python/samcli/local/init/templates/cookiecutter-aws-sam-hello-ruby/*
 python/setuptools/*
+"python/shapely/*"
+"python/shapely.libs/*"
 python/tzlocal/test_data/*
 python/urllib3/*
 python/websocket/tests/*
 python/wheel/*
-share/bash-completion
 share/cryptopp/*
 share/doc/*
 share/gtk-doc/*

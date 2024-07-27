@@ -1,12 +1,11 @@
 FROM --platform=linux/amd64 public.ecr.aws/lambda/python:3.10
 
-ENV PANDAS_VERSION=2.1.4
-ENV GEOPANDAS_VERSION=1.0.1
+ENV NUMPY_VERSION="1.26.4"
 
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN pip install "pandas==${PANDAS_VERSION}" "geopandas==${GEOPANDAS_VERSION}" -t python
+RUN pip install "numpy==${NUMPY_VERSION}" -t python
 
 # Precompile all python packages and remove .py files
 RUN python -m compileall .
@@ -18,3 +17,5 @@ RUN find python/ -type f -a -name '*.py' -print0 | xargs -0 rm -f
 RUN yum install -y zip
 COPY .lambdaignore .
 RUN cat .lambdaignore | xargs zip -9qyr layer.zip python -x
+
+CMD ["/bin/bash"]
