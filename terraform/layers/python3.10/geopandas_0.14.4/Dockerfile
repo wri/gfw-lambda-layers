@@ -3,11 +3,17 @@ FROM --platform=linux/amd64 public.ecr.aws/lambda/python:3.10
 ENV NUMPY_VERSION="1.26.4"
 ENV PANDAS_VERSION="1.5.3"
 ENV GEOPANDAS_VERSION="0.14.4"
+ENV SHAPELY_VERSION="1.8.5.post1"
 
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN pip install "numpy==${NUMPY_VERSION}" "pandas==${PANDAS_VERSION}" "geopandas==${GEOPANDAS_VERSION}" -t python
+RUN pip install \
+    "numpy==${NUMPY_VERSION}" \
+    "shapely==${SHAPELY_VERSION}" \
+    "pandas==${PANDAS_VERSION}" \
+    "geopandas==${GEOPANDAS_VERSION}" \
+    -t python
 
 # Precompile all python packages and remove .py files
 RUN python -m compileall .
