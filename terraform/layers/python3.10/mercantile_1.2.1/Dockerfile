@@ -16,4 +16,4 @@ RUN find python/ -type f -a -name '*.py' -print0 | xargs -0 rm -f
 # Compress all source codes except files listed in .lambdaignore
 RUN yum install -y zip
 COPY .lambdaignore .
-RUN cat .lambdaignore | xargs zip -9qyr layer.zip python -x
+RUN zip -9qyr layer.zip python -x@.lambdaignore
