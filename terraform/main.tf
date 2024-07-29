@@ -16,6 +16,15 @@ data "terraform_remote_state" "core" {
   }
 }
 
+module "py310_geopandas_0144" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "geopandas"
+  module_version = "0.14.4"
+  runtime        = "python3.10"
+  layer_path     = "${path.root}/layers/python3.10/geopandas_0.14.4/"
+}
+
 module "py310_mercantile_121" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
@@ -25,6 +34,15 @@ module "py310_mercantile_121" {
   layer_path     = "${path.root}/layers/python3.10/mercantile_1.2.1/"
 }
 
+module "py310_numpy_1264" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "numpy"
+  module_version = "1.26.4"
+  runtime        = "python3.10"
+  layer_path     = "${path.root}/layers/python3.10/numpy_1.26.4/"
+}
+
 module "py310_pandas_153" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
@@ -32,16 +50,6 @@ module "py310_pandas_153" {
   module_version = "1.5.3"
   runtime        = "python3.10"
   layer_path     = "${path.root}/layers/python3.10/pandas_1.5.3/"
-}
-
-# Includes geopandas v1.0.1
-module "py310_pandas_214" {
-  source         = "./modules/lambda_layer"
-  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
-  name           = "pandas"
-  module_version = "2.1.4"
-  runtime        = "python3.10"
-  layer_path     = "${path.root}/layers/python3.10/pandas_2.1.4/"
 }
 
 module "py310_pillow_950" {
