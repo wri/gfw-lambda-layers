@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/python:3.10
+FROM --platform=linux/amd64 public.ecr.aws/lambda/python:3.10
 
 ENV MERCANTILE_VERSION=1.2.1
 
