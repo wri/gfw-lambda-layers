@@ -25,3 +25,24 @@ output "py310_rasterio_138_arn" {
 output "py310_shapely_185_arn" {
   value = module.py310_shapely_185.layer_arn
 }
+
+# Temporary:
+output "py310_geopandas_no_numpy_no_pandas_arn" {
+  value = module.py310_geopandas_no_numpy_no_pandas.layer_arn
+}
+
+output "py310_pandas_no_numpy_arn" {
+  value = module.py310_pandas_no_numpy.layer_arn
+}
+
+output "py310_numpy_arn" {
+  value = module.py310_numpy.layer_arn
+}
+
+output "py310_rasterio_no_numpy_arn" {
+  value = module.py310_rasterio_no_numpy.layer_arn
+}
+
+output "py310_shapely_no_numpy_arn" {
+  value = module.py310_shapely_no_numpy.layer_arn
+}
