@@ -1,11 +1,11 @@
 FROM --platform=linux/amd64 public.ecr.aws/lambda/python:3.10
 
-ENV MERCANTILE_VERSION=1.2.1
+ENV NUMPY_VERSION="1.26.4"
 
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN pip3.10 install mercantile==${MERCANTILE_VERSION} -t python
+RUN pip install "numpy==${NUMPY_VERSION}" -t python
 
 # Precompile all python packages and remove .py files
 RUN python -m compileall .
