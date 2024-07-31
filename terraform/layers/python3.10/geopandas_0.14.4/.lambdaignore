@@ -14,7 +14,6 @@ python/jmespath/*
 python/jsonschema/tests/*
 python/numpy/*
 python/numpy.libs/*
-python/packaging/*
 python/pandas/*
 python/pandas.libs/*
 python/past/tests/*
