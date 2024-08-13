@@ -84,7 +84,7 @@ module "py310_shapely_185" {
 module "py310_geopandas_no_numpy_no_pandas" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
-  name           = "geopandas"
+  name           = "geopandas_no_numpy_no_pandas"
   module_version = "0.14.4"
   runtime        = "python3.10"
   layer_path     = "${path.root}/layers/python3.10/geopandas_no_numpy_no_pandas/"
@@ -102,7 +102,7 @@ module "py310_numpy" {
 module "py310_pandas_no_numpy" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
-  name           = "pandas"
+  name           = "pandas_no_numpy"
   module_version = "1.5.3"
   runtime        = "python3.10"
   layer_path     = "${path.root}/layers/python3.10/pandas_no_numpy/"
@@ -111,7 +111,7 @@ module "py310_pandas_no_numpy" {
 module "py310_rasterio_no_numpy" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
-  name           = "rasterio"
+  name           = "rasterio_no_numpy"
   module_version = "1.3.8"
   runtime        = "python3.10"
   layer_path     = "${path.root}/layers/python3.10/rasterio_no_numpy/"
@@ -120,7 +120,7 @@ module "py310_rasterio_no_numpy" {
 module "py310_shapely_no_numpy" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
-  name           = "shapely"
+  name           = "shapely_no_numpy"
   module_version = "1.8.5"
   runtime        = "python3.10"
   name_suffix    = local.name_suffix
