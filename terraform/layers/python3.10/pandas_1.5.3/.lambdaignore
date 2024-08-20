@@ -12,8 +12,6 @@ python/future/moves/test/*
 python/future/tests/*
 python/jmespath/*
 python/jsonschema/tests/*
-python/numpy/*
-python/numpy.libs/*
 python/past/tests/*
 python/pip/*
 python/pkg_resources/*
