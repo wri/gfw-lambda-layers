@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 public.ecr.aws/lambda/python:3.10
+FROM public.ecr.aws/lambda/python:3.10
 
 ENV PILLOW_VERSION=9.5.0
 
