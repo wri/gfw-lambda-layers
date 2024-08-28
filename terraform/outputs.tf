@@ -22,6 +22,10 @@ output "py310_rasterio_138_arn" {
   value = module.py310_rasterio_138.layer_arn
 }
 
+output "py310_rasterio_no_numpy_1310_arn" {
+  value = module.py310_rasterio_no_numpy_1310.layer_arn
+}
+
 output "py310_shapely_185_arn" {
   value = module.py310_shapely_185.layer_arn
 }

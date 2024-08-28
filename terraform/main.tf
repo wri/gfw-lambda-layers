@@ -70,6 +70,15 @@ module "py310_rasterio_138" {
   layer_path     = "${path.root}/layers/python3.10/rasterio_1.3.8/"
 }
 
+module "py310_rasterio_no_numpy_1310" {
+  source         = "./modules/lambda_layer"
+  bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
+  name           = "rasterio_no_numpy_1310"
+  module_version = "1.3.10"
+  runtime        = "python3.10"
+  layer_path     = "${path.root}/layers/python3.10/rasterio_no_numpy_1.3.10/"
+}
+
 module "py310_shapely_185" {
   source         = "./modules/lambda_layer"
   bucket         = data.terraform_remote_state.core.outputs.pipelines_bucket
