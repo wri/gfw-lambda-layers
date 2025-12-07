@@ -134,6 +134,7 @@ module "ssm" {
   contract = {
     py310_geopandas_0144_arn    = module.py310_geopandas_0144.layer_arn
     py310_mercantile_121_arn    = module.py310_mercantile_121.layer_arn
+    py310_numpy_1264_arn        = module.py310_numpy_1264.layer_arn
     py310_numpy_arn             = module.py310_numpy.layer_arn
     py310_pandas_no_numpy_arn   = module.py310_pandas_no_numpy.layer_arn
     py310_pillow_950_arn        = module.py310_pillow_950.layer_arn
