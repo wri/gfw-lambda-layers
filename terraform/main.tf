@@ -117,3 +117,22 @@ module "py310_shapely_no_numpy" {
   name_suffix    = local.name_suffix
   layer_path     = "${path.root}/layers/python3.10/shapely_no_numpy/"
 }
+
+module "ssm" {
+  source      = "git::https://github.com/wri/gfw-terraform-modules.git//terraform/modules/ssm?ref=v0.4.2.8"
+  environment = var.environment
+  namespace   = "gfw-lambda-layers"
+  contract = {
+    py310_geopandas_0144_arn    = module.py310_geopandas_0144.layer_arn
+    py310_mercantile_121_arn    = module.py310_mercantile_121.layer_arn
+    py310_numpy_1264_arn        = module.py310_numpy_1264.layer_arn
+    py310_numpy_arn             = module.py310_numpy.layer_arn
+    py310_pandas_no_numpy_arn   = module.py310_pandas_no_numpy.layer_arn
+    py310_pillow_950_arn        = module.py310_pillow_950.layer_arn
+    py310_rasterio_no_numpy_arn = module.py310_rasterio_no_numpy.layer_arn
+    py310_shapely_no_numpy_arn  = module.py310_shapely_no_numpy.layer_arn
+  }
+  lists = {}
+  strings = {}
+  secure_strings = {}
+}
