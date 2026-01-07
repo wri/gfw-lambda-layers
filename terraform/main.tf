@@ -9,7 +9,7 @@ terraform {
 
 module "py310_geopandas_0144" {
   source         = "./modules/lambda_layer"
-  bucket         = local.core.pipelines_bucket
+  bucket         = local.core.gfw_pipelines_bucket_name
   name           = "geopandas"
   module_version = "0.14.4"
   runtime        = "python3.10"
@@ -18,7 +18,7 @@ module "py310_geopandas_0144" {
 
 module "py310_mercantile_121" {
   source         = "./modules/lambda_layer"
-  bucket         = local.core.pipelines_bucket
+  bucket         = local.core.gfw_pipelines_bucket_name
   name           = "mercantile"
   module_version = "1.2.1"
   runtime        = "python3.10"
@@ -27,7 +27,7 @@ module "py310_mercantile_121" {
 
 module "py310_numpy_1264" {
   source         = "./modules/lambda_layer"
-  bucket         = local.core.pipelines_bucket
+  bucket         = local.core.gfw_pipelines_bucket_name
   name           = "numpy"
   module_version = "1.26.4"
   runtime        = "python3.10"
@@ -36,7 +36,7 @@ module "py310_numpy_1264" {
 
 module "py310_pandas_153" {
   source         = "./modules/lambda_layer"
-  bucket         = local.core.pipelines_bucket
+  bucket         = local.core.gfw_pipelines_bucket_name
   name           = "pandas"
   module_version = "1.5.3"
   runtime        = "python3.10"
@@ -45,7 +45,7 @@ module "py310_pandas_153" {
 
 module "py310_pillow_950" {
   source         = "./modules/lambda_layer"
-  bucket         = local.core.pipelines_bucket
+  bucket         = local.core.gfw_pipelines_bucket_name
   name           = "pillow"
   module_version = "9.5.0"
   runtime        = "python3.10"
@@ -54,7 +54,7 @@ module "py310_pillow_950" {
 
 module "py310_rasterio_138" {
   source         = "./modules/lambda_layer"
-  bucket         = local.core.pipelines_bucket
+  bucket         = local.core.gfw_pipelines_bucket_name
   name           = "rasterio"
   module_version = "1.3.8"
   runtime        = "python3.10"
@@ -63,7 +63,7 @@ module "py310_rasterio_138" {
 
 module "py310_shapely_185" {
   source         = "./modules/lambda_layer"
-  bucket         = local.core.pipelines_bucket
+  bucket         = local.core.gfw_pipelines_bucket_name
   name           = "shapely"
   module_version = "1.8.5"
   runtime        = "python3.10"
@@ -74,7 +74,7 @@ module "py310_shapely_185" {
 # These are temporary:
 module "py310_geopandas_no_numpy_no_pandas" {
   source         = "./modules/lambda_layer"
-  bucket         = local.core.pipelines_bucket
+  bucket         = local.core.gfw_pipelines_bucket_name
   name           = "geopandas_no_numpy_no_pandas"
   module_version = "0.14.4"
   runtime        = "python3.10"
@@ -83,7 +83,7 @@ module "py310_geopandas_no_numpy_no_pandas" {
 
 module "py310_numpy" {
   source         = "./modules/lambda_layer"
-  bucket         = local.core.pipelines_bucket
+  bucket         = local.core.gfw_pipelines_bucket_name
   name           = "numpy"
   module_version = "1.26.4"
   runtime        = "python3.10"
@@ -92,7 +92,7 @@ module "py310_numpy" {
 
 module "py310_pandas_no_numpy" {
   source         = "./modules/lambda_layer"
-  bucket         = local.core.pipelines_bucket
+  bucket         = local.core.gfw_pipelines_bucket_name
   name           = "pandas_no_numpy"
   module_version = "1.5.3"
   runtime        = "python3.10"
@@ -101,7 +101,7 @@ module "py310_pandas_no_numpy" {
 
 module "py310_rasterio_no_numpy" {
   source         = "./modules/lambda_layer"
-  bucket         = local.core.pipelines_bucket
+  bucket         = local.core.gfw_pipelines_bucket_name
   name           = "rasterio_no_numpy"
   module_version = "1.3.8"
   runtime        = "python3.10"
@@ -110,7 +110,7 @@ module "py310_rasterio_no_numpy" {
 
 module "py310_shapely_no_numpy" {
   source         = "./modules/lambda_layer"
-  bucket         = local.core.pipelines_bucket
+  bucket         = local.core.gfw_pipelines_bucket_name
   name           = "shapely_no_numpy"
   module_version = "1.8.5"
   runtime        = "python3.10"
