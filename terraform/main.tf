@@ -119,7 +119,7 @@ module "py310_shapely_no_numpy" {
 }
 
 module "ssm" {
-  source      = "git::https://github.com/wri/gfw-terraform-modules.git//terraform/modules/ssm?ref=v0.4.2.8"
+  source      = "git::https://github.com/wri/gfw-terraform-modules.git//terraform/modules/ssm?ref=v0.4.2.12"
   environment = var.environment
   namespace   = "gfw-lambda-layers"
   contract = {
