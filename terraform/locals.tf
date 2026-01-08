@@ -1,6 +1,4 @@
 locals {
-  bucket_suffix   = var.environment == "production" ? "" : "-${var.environment}"
-  tf_state_bucket = "gfw-terraform${local.bucket_suffix}"
   project         = "lambda-layers"
   name_suffix     = terraform.workspace == "default" ? "" : "-${terraform.workspace}"
   tags = {
@@ -8,4 +6,5 @@ locals {
     Environment = var.environment,
     BuiltBy     = "Terraform"
   }
+  core          = jsondecode(data.aws_ssm_parameter.core_contract.value)
 }
