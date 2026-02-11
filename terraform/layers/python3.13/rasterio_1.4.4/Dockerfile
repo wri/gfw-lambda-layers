@@ -11,7 +11,7 @@ WORKDIR /opt
 RUN mkdir -p python
 
 RUN dnf update -y && \
-    dnf install -y gcc gcc-c++ wget cmake proj-devel sqlite-devel tar libcurl-devel libtiff-devel libpng-devel libjpeg-devel libxml2-devel zlib-devel pkgconfig findutils zip && \
+    dnf install -y expat-devel gcc gcc-c++ wget cmake proj-devel sqlite-devel tar libcurl-devel libtiff-devel libpng-devel libjpeg-devel libxml2-devel zlib-devel pkgconfig findutils zip && \
     dnf clean all
 
 # Build gdal from source
