@@ -403,10 +403,11 @@ RUN mkdir /tmp/patchelf \
   && make -j $(nproc) --silent && make install \
   && cd / && rm -rf /tmp/patchelf
 
-# # libturbojpeg.so is not used by GDAL. Only libjpeg.so*
+# libturbojpeg.so is not used by GDAL. Only libjpeg.so*
 RUN rm -f $PREFIX/lib/libturbojpeg.so* \
-  # Only libwebp.so is used by GDAL
-  && rm -f  $PREFIX/lib/libwebpmux.so*  $PREFIX/lib/libwebpdemux.so* $PREFIX/lib/libwebpdecoder.so*
+
+# Only libwebp.so is used by GDAL \
+RUN rm -f $PREFIX/lib/libwebpmux.so* $PREFIX/lib/libwebpdemux.so* $PREFIX/lib/libwebpdecoder.so*
 
 # FIX
 RUN for i in $PREFIX/bin/*; do patchelf --force-rpath --set-rpath '$ORIGIN/../lib' $i; done
