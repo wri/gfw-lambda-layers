@@ -309,6 +309,7 @@ RUN mkdir /tmp/hdf5 \
   --with-szlib=$PREFIX \
   --enable-cxx \
   --enable-threadsafe \
+  --disable-hl \
   --disable-static \
   && make -j $(nproc) --silent && make install && make clean \
   && rm -rf /tmp/hdf5
