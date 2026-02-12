@@ -51,7 +51,7 @@ RUN mkdir /tmp/libexpat \
 ENV \
   SQLITE3_LIBS="-L${PREFIX}/lib -lsqlite3" \
   SQLITE3_INCLUDE_DIR="${PREFIX}/include" \
-  SQLITE3_CFLAGS="$CFLAGS -I${PREFIX}/include" \
+  SQLITE3_CFLAGS="-O2 -Wl,-S -I${PREFIX}/include" \
   PATH=${PREFIX}/bin/:$PATH
 
 # libxml2
