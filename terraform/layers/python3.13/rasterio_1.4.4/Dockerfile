@@ -9,6 +9,7 @@ LABEL maintainer="lambgeo <geolambdas@gmail.com>"
 # cmake is available directly (not cmake3)
 # libtirpc-devel provides RPC headers needed by HDF4
 RUN dnf update -y && \
+    dnf remove -y sqlite && \
     dnf install -y git autoconf libtool flex bison cmake make \
       tar gzip gcc gcc-c++ automake libpng-devel nasm libtirpc-devel \
       libxml2-devel readline-devel openssl-devel curl-devel && \
@@ -36,7 +37,7 @@ ENV PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/
 RUN mkdir /tmp/sqlite \
   && curl -sfL https://www.sqlite.org/2026/sqlite-autoconf-3510200.tar.gz | tar zxf - -C /tmp/sqlite --strip-components=1 \
   && cd /tmp/sqlite \
-  && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure --prefix=$PREFIX --disable-static \
+  && CFLAGS="-O2 -Wl,-S -DSQLITE_ENABLE_RTREE=1" CXXFLAGS="-O2 -Wl,-S -DSQLITE_ENABLE_RTREE=1" ./configure --prefix=$PREFIX --disable-static \
   && make -j $(nproc) --silent && make install && make clean \
   && rm -rf /tmp/sqlite
 
@@ -308,7 +309,7 @@ RUN mkdir /tmp/hdf5 \
   --prefix=$PREFIX \
   --with-szlib=$PREFIX \
   --enable-cxx \
-  --enable-thread-safe \
+  --enable-threadsafe \
   --disable-static \
   && make -j $(nproc) --silent && make install && make clean \
   && rm -rf /tmp/hdf5
