@@ -5,6 +5,12 @@ LABEL maintainer="lambgeo <geolambdas@gmail.com>"
 # Copied from https://github.com/GeoWill/docker-lambda/blob/635b19426c793315b452822077455f1f8446d5fa/dockerfiles/Dockerfile.al2023
 # With a few package upgrades
 
+ENV LANGUAGE=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
+    LANG=en_US.UTF-8 \
+    LC_CTYPE=en_US.UTF-8
+
+
 # AL2023 uses dnf instead of yum, and automake instead of automake16
 # cmake is available directly (not cmake3)
 # libtirpc-devel provides RPC headers needed by HDF4
@@ -404,10 +410,10 @@ RUN mkdir /tmp/patchelf \
   && cd / && rm -rf /tmp/patchelf
 
 # libturbojpeg.so is not used by GDAL. Only libjpeg.so*
-RUN rm -f $PREFIX/lib/libturbojpeg.so* \
+RUN rm -f $PREFIX/lib/libturbojpeg.so*
 
-# Only libwebp.so is used by GDAL \
-RUN rm -f $PREFIX/lib/libwebpmux.so* $PREFIX/lib/libwebpdemux.so* $PREFIX/lib/libwebpdecoder.so*
+# Only libwebp.so is used by GDAL
+RUN rm -f ${PREFIX}/lib/libwebpmux.so* ${PREFIX}/lib/libwebpdemux.so* ${PREFIX}/lib/libwebpdecoder.so*
 
 # FIX
 RUN for i in $PREFIX/bin/*; do patchelf --force-rpath --set-rpath '$ORIGIN/../lib' $i; done
