@@ -3,13 +3,12 @@ FROM public.ecr.aws/lambda/provided:al2023 AS builder
 LABEL maintainer="lambgeo <geolambdas@gmail.com>"
 
 # Copied from https://github.com/GeoWill/docker-lambda/blob/635b19426c793315b452822077455f1f8446d5fa/dockerfiles/Dockerfile.al2023
-# With a few package upgrades
+# With a few package upgrades and tweaks
 
 ENV LANGUAGE=en_US.UTF-8 \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
     LC_CTYPE=en_US.UTF-8
-
 
 # AL2023 uses dnf instead of yum, and automake instead of automake16
 # cmake is available directly (not cmake3)
@@ -446,6 +445,10 @@ FROM public.ecr.aws/lambda/provided:al2023 AS runner
 ENV PREFIX=/opt
 ENV WORKDIR=${PREFIX}
 WORKDIR ${WORKDIR}
+
+RUN dnf update -y && \
+    dnf install -y findutils zip && \
+    dnf clean all
 
 COPY --from=builder /opt/lib/ $PREFIX/lib/
 COPY --from=builder /opt/include/ $PREFIX/include/
