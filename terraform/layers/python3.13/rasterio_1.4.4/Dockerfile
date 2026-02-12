@@ -415,13 +415,34 @@ RUN for i in $PREFIX/lib/*.so; do patchelf --force-rpath --set-rpath '$ORIGIN' $
 # hdf4 needs libtrc headers so copy these over
 RUN cp /usr/lib64/libtirpc.so* $PREFIX/lib/
 
+# Now the Python bits
+ENV USR_LOCAL_BIN="/usr/local/bin"
+RUN mkdir -p ${USR_LOCAL_BIN}
+
+ENV UV_LINK_MODE=copy \
+    UV_COMPILE_BYTECODE=1 \
+    UV_UNMANAGED_INSTALL=${USR_LOCAL_BIN}
+
+ENV PATH=${USR_LOCAL_BIN}:${PATH}
+
+ENV NUMPY_VERSION="2.4.2"
+ENV RASTERIO_VERSION="1.4.4"
+ENV UV_VERSIONUV_VERSION="0.10.2"
+
+RUN curl -LsSf https://github.com/astral-sh/uv/releases/download/${UV_VERSION}/uv-installer.sh | sh && \
+    uv pip install NumPy==${NUMPY_VERSION} rasterio==${RASTERIO_VERSION} --no-binary rasterio -t ${PREFIX}/python
+
 # Build final image
 FROM public.ecr.aws/lambda/provided:al2023 AS runner
 
 ENV PREFIX=/opt
+ENV WORKDIR=${PREFIX}
+WORKDIR ${WORKDIR}
+
 COPY --from=builder /opt/lib/ $PREFIX/lib/
 COPY --from=builder /opt/include/ $PREFIX/include/
 COPY --from=builder /opt/share/ $PREFIX/share/
+COPY --from=builder /opt/python/ $PREFIX/python/
 COPY --from=builder /opt/bin/ $PREFIX/bin/
 
 RUN export GDAL_VERSION=$(gdal-config --version)
@@ -432,9 +453,6 @@ ENV \
   GDAL_CONFIG=$PREFIX/bin/gdal-config \
   GEOS_CONFIG=$PREFIX/bin/geos-config \
   PATH=$PREFIX/bin:$PATH
-
-# And now the Python bits:
-RUN pip install NumPy==${NUMPY_VERSION} rasterio==${RASTERIO_VERSION} --no-binary rasterio -t /opt/python
 
 # Compress all files except those listed in .lambdaignore
 COPY .lambdaignore .
