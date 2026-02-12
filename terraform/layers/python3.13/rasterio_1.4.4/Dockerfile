@@ -9,7 +9,6 @@ LABEL maintainer="lambgeo <geolambdas@gmail.com>"
 # cmake is available directly (not cmake3)
 # libtirpc-devel provides RPC headers needed by HDF4
 RUN dnf update -y && \
-    dnf remove -y sqlite && \
     dnf install -y git autoconf libtool flex bison cmake make \
       tar gzip gcc gcc-c++ automake libpng-devel nasm libtirpc-devel \
       libxml2-devel readline-devel openssl-devel curl-devel && \
