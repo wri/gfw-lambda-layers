@@ -427,11 +427,12 @@ ENV UV_LINK_MODE=copy \
 ENV PATH=${USR_LOCAL_BIN}:${PATH}
 
 ENV NUMPY_VERSION="2.4.2"
+ENV PYTHON_VERSION="3.13"
 ENV RASTERIO_VERSION="1.4.4"
 ENV UV_VERSION="0.10.2"
 
 RUN curl -LsSf https://github.com/astral-sh/uv/releases/download/${UV_VERSION}/uv-installer.sh | sh && \
-    uv pip install NumPy==${NUMPY_VERSION} rasterio==${RASTERIO_VERSION} --no-binary rasterio -t ${PREFIX}/python
+    uv pip install NumPy==${NUMPY_VERSION} rasterio==${RASTERIO_VERSION} --no-binary rasterio -p ${PYTHON_VERSION} -t ${PREFIX}/python
 
 # Build final image
 FROM public.ecr.aws/lambda/provided:al2023 AS runner
