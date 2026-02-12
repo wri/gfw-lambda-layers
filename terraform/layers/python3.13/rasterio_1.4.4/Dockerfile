@@ -427,7 +427,7 @@ ENV PATH=${USR_LOCAL_BIN}:${PATH}
 
 ENV NUMPY_VERSION="2.4.2"
 ENV RASTERIO_VERSION="1.4.4"
-ENV UV_VERSIONUV_VERSION="0.10.2"
+ENV UV_VERSION="0.10.2"
 
 RUN curl -LsSf https://github.com/astral-sh/uv/releases/download/${UV_VERSION}/uv-installer.sh | sh && \
     uv pip install NumPy==${NUMPY_VERSION} rasterio==${RASTERIO_VERSION} --no-binary rasterio -t ${PREFIX}/python
