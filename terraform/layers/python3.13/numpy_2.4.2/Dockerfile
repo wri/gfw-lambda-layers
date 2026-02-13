@@ -8,7 +8,7 @@ RUN mkdir -p python
 RUN dnf update -y && \
     dnf install -y zip findutils
 
-RUN pip install "numpy==${NUMPY_VERSION}" -t python
+RUN pip install --root-user-action "numpy==${NUMPY_VERSION}" -t python
 
 # Precompile all python packages and remove .py files
 RUN python -m compileall .

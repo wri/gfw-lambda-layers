@@ -10,7 +10,7 @@ RUN mkdir -p python
 RUN dnf update -y && \
     dnf install -y zip findutils
 
-RUN pip install "NumPy==${NUMPY_VERSION}" "PyYAML==${PYYAML_VERSION}" "shapely==${SHAPELY_VERSION}" -t python
+RUN pip install --root-user-action "NumPy==${NUMPY_VERSION}" "PyYAML==${PYYAML_VERSION}" "shapely==${SHAPELY_VERSION}" -t python
 
 # Precompile all python packages and remove .py files
 RUN python -m compileall .
