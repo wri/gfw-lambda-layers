@@ -11,7 +11,7 @@ ENV LANGUAGE=${LOCALE} \
     LANG=${LOCALE} \
     LC_CTYPE=${LOCALE}
 
-RUN locale-gen ${LOCALE}
+RUN localectl set-locale LANG=${LOCALE}
 
 # AL2023 uses dnf instead of yum, and automake instead of automake16
 # cmake is available directly (not cmake3)
