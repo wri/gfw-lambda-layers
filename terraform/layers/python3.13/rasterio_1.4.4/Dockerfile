@@ -5,10 +5,13 @@ LABEL maintainer="lambgeo <geolambdas@gmail.com>"
 # Copied from https://github.com/GeoWill/docker-lambda/blob/635b19426c793315b452822077455f1f8446d5fa/dockerfiles/Dockerfile.al2023
 # With a few package upgrades and tweaks
 
-ENV LANGUAGE=en_US.UTF-8 \
-    LC_ALL=en_US.UTF-8 \
-    LANG=en_US.UTF-8 \
-    LC_CTYPE=en_US.UTF-8
+ENV LOCALE="en_US.UTF-8"
+ENV LANGUAGE=${LOCALE} \
+    LC_ALL=${LOCALE} \
+    LANG=${LOCALE} \
+    LC_CTYPE=${LOCALE}
+
+RUN locale-gen ${LOCALE}
 
 # AL2023 uses dnf instead of yum, and automake instead of automake16
 # cmake is available directly (not cmake3)
