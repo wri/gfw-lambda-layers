@@ -5,8 +5,6 @@ ENV SHAPELY_VERSION="2.1.2"
 ENV PANDAS_VERSION="2.3.3"
 ENV GEOPANDAS_VERSION="1.1.2"
 
-SHELL ["/bin/bash", "-c"]
-
 WORKDIR /opt
 RUN mkdir -p python
 
@@ -26,6 +24,6 @@ RUN find python/ -type f -name '*.pyc' | while read f; do n=$(echo $f | sed 's/_
 RUN find python/ -type d -a -name '__pycache__' -print0 | xargs -0 rm -rf
 RUN find python/ -type f -a -name '*.py' -print0 | xargs -0 rm -f
 
-# Compress all source codes except files listed in .lambdaignore
+# Compress all source code except those files listed in .lambdaignore
 COPY .lambdaignore .
 RUN cat .lambdaignore | xargs zip -9qyr layer.zip python -x

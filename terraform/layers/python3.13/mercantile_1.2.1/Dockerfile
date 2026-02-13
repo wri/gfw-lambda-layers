@@ -1,8 +1,6 @@
 FROM public.ecr.aws/lambda/python:3.13
 
-ENV MERCANTILE_VERSION=1.2.1
-
-SHELL ["/bin/bash", "-c"]
+ENV MERCANTILE_VERSION="1.2.1"
 
 WORKDIR /opt
 RUN mkdir -p python
@@ -10,7 +8,7 @@ RUN mkdir -p python
 RUN dnf update -y && \
     dnf install -y zip findutils
 
-RUN pip install mercantile==${MERCANTILE_VERSION} -t python
+RUN pip install "mercantile==${MERCANTILE_VERSION}" -t python
 
 # Precompile all python packages and remove .py files
 RUN python -m compileall .
@@ -18,6 +16,6 @@ RUN find python/ -type f -name '*.pyc' | while read f; do n=$(echo $f | sed 's/_
 RUN find python/ -type d -a -name '__pycache__' -print0 | xargs -0 rm -rf
 RUN find python/ -type f -a -name '*.py' -print0 | xargs -0 rm -f
 
-# Compress all source codes except files listed in .lambdaignore
+# Compress all source code except those files listed in .lambdaignore
 COPY .lambdaignore .
 RUN cat .lambdaignore | xargs zip -9qyr layer.zip python -x

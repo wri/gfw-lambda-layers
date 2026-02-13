@@ -122,7 +122,7 @@ module "py310_shapely_no_numpy" {
 module "py313_geopandas_112" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
-  name           = "py313_geopandas_112"
+  name           = "geopandas"
   module_version = "1.1.2"
   runtime        = "python3.13"
   layer_path     = "${path.root}/layers/python3.13/geopandas_1.1.2/"
@@ -131,7 +131,7 @@ module "py313_geopandas_112" {
 module "py313_mercantile_121" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
-  name           = "py313_mercantile_121"
+  name           = "mercantile"
   module_version = "1.2.1"
   runtime        = "python3.13"
   layer_path     = "${path.root}/layers/python3.13/mercantile_1.2.1/"
@@ -140,7 +140,7 @@ module "py313_mercantile_121" {
 module "py313_numpy_242" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
-  name           = "py313_numpy_242"
+  name           = "numpy"
   module_version = "2.4.2"
   runtime        = "python3.13"
   layer_path     = "${path.root}/layers/python3.13/numpy_2.4.2/"
@@ -149,7 +149,7 @@ module "py313_numpy_242" {
 module "py313_pandas_233" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
-  name           = "py313_pandas_233"
+  name           = "pandas"
   module_version = "2.3.3"
   runtime        = "python3.13"
   layer_path     = "${path.root}/layers/python3.13/pandas_2.3.3/"
@@ -158,7 +158,7 @@ module "py313_pandas_233" {
 module "py313_pillow_1210" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
-  name           = "py313_pillow_1210"
+  name           = "pillow"
   module_version = "12.1.0"
   runtime        = "python3.13"
   layer_path     = "${path.root}/layers/python3.13/pillow_12.1.0/"
@@ -167,7 +167,7 @@ module "py313_pillow_1210" {
 module "py313_rasterio_144" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
-  name           = "py313_rasterio_144"
+  name           = "rasterio"
   module_version = "1.4.4"
   runtime        = "python3.13"
   layer_path     = "${path.root}/layers/python3.13/rasterio_1.4.4/"
@@ -176,7 +176,7 @@ module "py313_rasterio_144" {
 module "py313_shapely_212" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
-  name           = "py313_shapely_212"
+  name           = "shapely"
   module_version = "2.1.2"
   runtime        = "python3.13"
   name_suffix    = local.name_suffix
@@ -184,7 +184,7 @@ module "py313_shapely_212" {
 }
 
 module "ssm" {
-  source      = "git::https://github.com/wri/gfw-terraform-modules.git//terraform/modules/ssm?ref=v0.4.2.12"
+  source      = "git::https://github.com/wri/gfw-terraform-modules.git//terraform/modules/ssm?ref=v0.4.2.13"
   environment = var.environment
   namespace   = "gfw-lambda-layers"
   contract = {
