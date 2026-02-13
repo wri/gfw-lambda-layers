@@ -11,7 +11,7 @@ RUN mkdir -p python
 RUN dnf update -y && \
     dnf install -y zip findutils
 
-RUN pip install --root-user-action \
+RUN pip install --root-user-action=ignore \
     "numpy==${NUMPY_VERSION}" \
     "shapely==${SHAPELY_VERSION}" \
     "pandas==${PANDAS_VERSION}" \
