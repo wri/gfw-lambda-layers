@@ -5,6 +5,16 @@ LABEL maintainer="lambgeo <geolambdas@gmail.com>"
 # Copied from https://github.com/GeoWill/docker-lambda/blob/635b19426c793315b452822077455f1f8446d5fa/dockerfiles/Dockerfile.al2023
 # With a few package upgrades and tweaks
 
+# AL2023 uses dnf instead of yum, and automake instead of automake16
+# cmake is available directly (not cmake3)
+# libtirpc-devel provides RPC headers needed by HDF4
+RUN dnf update -y && \
+    dnf install -y git autoconf libtool flex bison cmake make \
+      tar gzip gcc gcc-c++ automake libpng-devel nasm libtirpc-devel \
+      libxml2-devel readline-devel openssl-devel curl-devel glibc-langpack-en && \
+    dnf clean all && \
+    rm -rf /var/cache/dnf
+
 ENV LOCALE="en_US.UTF-8"
 ENV LANGUAGE=${LOCALE} \
     LC_ALL=${LOCALE} \
@@ -12,16 +22,6 @@ ENV LANGUAGE=${LOCALE} \
     LC_CTYPE=${LOCALE}
 
 RUN localectl set-locale LANG=${LOCALE}
-
-# AL2023 uses dnf instead of yum, and automake instead of automake16
-# cmake is available directly (not cmake3)
-# libtirpc-devel provides RPC headers needed by HDF4
-RUN dnf update -y && \
-    dnf install -y git autoconf libtool flex bison cmake make \
-      tar gzip gcc gcc-c++ automake libpng-devel nasm libtirpc-devel \
-      libxml2-devel readline-devel openssl-devel curl-devel && \
-    dnf clean all && \
-    rm -rf /var/cache/dnf
 
 ENV PREFIX=/opt
 
