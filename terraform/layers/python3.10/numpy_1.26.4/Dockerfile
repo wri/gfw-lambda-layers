@@ -5,7 +5,7 @@ ENV NUMPY_VERSION="1.26.4"
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN pip install "numpy==${NUMPY_VERSION}" -t python
+RUN pip install --root-user-action=ignore "numpy==${NUMPY_VERSION}" -t python
 
 # Precompile all python packages and remove .py files
 RUN python -m compileall .

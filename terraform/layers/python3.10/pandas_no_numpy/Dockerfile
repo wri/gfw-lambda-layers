@@ -6,7 +6,7 @@ ENV PANDAS_VERSION="1.5.3"
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN pip install "numpy==${NUMPY_VERSION}" "pandas==${PANDAS_VERSION}" -t python
+RUN pip install --root-user-action=ignore "numpy==${NUMPY_VERSION}" "pandas==${PANDAS_VERSION}" -t python
 
 # Precompile all python packages and remove .py files
 RUN python -m compileall .

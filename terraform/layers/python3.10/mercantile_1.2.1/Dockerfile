@@ -5,7 +5,7 @@ ENV MERCANTILE_VERSION=1.2.1
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN pip3.10 install mercantile==${MERCANTILE_VERSION} -t python
+RUN pip3.10 install --root-user-action=ignore mercantile==${MERCANTILE_VERSION} -t python
 
 # Precompile all python packages and remove .py files
 RUN python -m compileall .

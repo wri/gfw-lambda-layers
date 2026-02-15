@@ -5,7 +5,7 @@ ENV PILLOW_VERSION=9.5.0
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN pip3.10 install pillow==${PILLOW_VERSION} -t python
+RUN pip3.10 install --root-user-action=ignore pillow==${PILLOW_VERSION} -t python
 
 # Precompile all python packages and remove .py files
 RUN python -m compileall .

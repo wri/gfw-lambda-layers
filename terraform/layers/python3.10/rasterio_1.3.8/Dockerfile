@@ -8,7 +8,7 @@ RUN mkdir -p python
 # Install rasterio from source because the binary pulls in its own GDAL
 # subset, and we already have it. Otherwise install binary packages,
 # because they tend to be smaller than those you build yourself.
-RUN pip install rasterio==${RASTERIO_VERSION} --no-binary rasterio -t python
+RUN pip install --root-user-action=ignore rasterio==${RASTERIO_VERSION} --no-binary rasterio -t python
 
 # Reduce size of the C libs
 # TODO: Try stripping bin as well?

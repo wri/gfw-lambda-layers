@@ -21,8 +21,6 @@ ENV LANGUAGE=${LOCALE} \
     LANG=${LOCALE} \
     LC_CTYPE=${LOCALE}
 
-# RUN localectl set-locale LANG=${LOCALE}
-
 ENV PREFIX=/opt
 
 WORKDIR /opt
