@@ -13,10 +13,8 @@ RUN pip install --root-user-action=ignore --upgrade pip setuptools
 RUN pip install --root-user-action=ignore NumPy==${NUMPY_VERSION} rasterio==${RASTERIO_VERSION} --no-binary rasterio -t python
 
 # Precompile all python packages and remove .py files
-RUN python -m compileall .
 RUN find python/ -type f -name '*.pyc' | while read f; do n=$(echo $f | sed 's/__pycache__\///' | sed 's/.cpython-310//'); cp $f $n; done;
 RUN find python/ -type d -a -name '__pycache__' -print0 | xargs -0 rm -rf
-RUN find python/ -type f -a -name '*.py' -print0 | xargs -0 rm -f
 
 # Reduce size of the C libs
 # TODO: Try stripping bin as well?
