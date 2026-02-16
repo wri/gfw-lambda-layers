@@ -6,6 +6,8 @@ ENV RASTERIO_VERSION=1.4.3
 WORKDIR /opt
 RUN mkdir -p python
 
+RUN yum install -y gzip make tar zip
+
 # Build SQLite from source with the symbols we need
 # sqlite3_trace_v2 was added in SQLite 3.14.0, so we use a modern version
 RUN mkdir /tmp/sqlite \
@@ -30,7 +32,6 @@ RUN find python/ -type d -a -name '__pycache__' -print0 | xargs -0 rm -rf
 RUN find lib -name \*.so\* -exec strip {} \;
 
 # Compress all source codes except files listed in .lambdaignore
-RUN yum install -y zip
 COPY .lambdaignore .
 RUN cat .lambdaignore | xargs zip -r9q layer.zip python -x && \
     cat .lambdaignore | xargs zip -r9q --symlinks layer.zip lib/*.so* share -x && \
