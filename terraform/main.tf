@@ -99,15 +99,6 @@ module "py310_pandas_no_numpy" {
   layer_path     = "${path.root}/layers/python3.10/pandas_no_numpy/"
 }
 
-module "py310_rasterio_no_numpy" {
-  source         = "./modules/lambda_layer"
-  bucket         = local.core.gfw_pipelines_bucket_name
-  name           = "rasterio_no_numpy"
-  module_version = "1.3.8"  # A necessary, temporary, lie
-  runtime        = "python3.10"
-  layer_path     = "${path.root}/layers/python3.10/rasterio_no_numpy/"
-}
-
 module "py310_shapely_no_numpy" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
@@ -195,7 +186,7 @@ module "ssm" {
     py310_pandas_no_numpy_arn   = module.py310_pandas_no_numpy.layer_arn
     py310_pillow_950_arn        = module.py310_pillow_950.layer_arn
     py310_rasterio_143_arn      = module.py310_rasterio_143.layer_arn
-    py310_rasterio_no_numpy_arn = module.py310_rasterio_no_numpy.layer_arn
+    py310_rasterio_no_numpy_arn = module.py310_rasterio_143.layer_arn
     py310_shapely_no_numpy_arn  = module.py310_shapely_no_numpy.layer_arn
     py313_geopandas_112_arn     = module.py313_geopandas_112.layer_arn
     py313_mercantile_121_arn    = module.py313_mercantile_121.layer_arn
