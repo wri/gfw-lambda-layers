@@ -6,6 +6,15 @@ ENV RASTERIO_VERSION=1.4.3
 WORKDIR /opt
 RUN mkdir -p python
 
+# Build SQLite from source with the symbols we need
+# sqlite3_trace_v2 was added in SQLite 3.14.0, so we use a modern version
+RUN mkdir /tmp/sqlite \
+  && curl -sfL https://www.sqlite.org/2026/sqlite-autoconf-3510200.tar.gz | tar zxf - -C /tmp/sqlite --strip-components=1 \
+  && cd /tmp/sqlite \
+  && CFLAGS="-O2 -Wl,-S -DSQLITE_ENABLE_RTREE=1" CXXFLAGS="-O2 -Wl,-S -DSQLITE_ENABLE_RTREE=1" ./configure --prefix=/opt --disable-static \
+  && make -j $(nproc) --silent && make install && make clean \
+  && rm -rf /tmp/sqlite
+
 # Install rasterio from source because the binary pulls in its own GDAL
 # subset, and we already have it. Otherwise install binary packages,
 # because they tend to be smaller than those you build yourself.
