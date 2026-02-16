@@ -52,15 +52,6 @@ module "py310_pillow_950" {
   layer_path     = "${path.root}/layers/python3.10/pillow_9.5.0/"
 }
 
-module "py310_rasterio_138" {
-  source         = "./modules/lambda_layer"
-  bucket         = local.core.gfw_pipelines_bucket_name
-  name           = "rasterio"
-  module_version = "1.3.8"
-  runtime        = "python3.10"
-  layer_path     = "${path.root}/layers/python3.10/rasterio_1.3.8/"
-}
-
 module "py310_rasterio_143" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
@@ -112,7 +103,7 @@ module "py310_rasterio_no_numpy" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
   name           = "rasterio_no_numpy"
-  module_version = "1.4.3"
+  module_version = "1.3.8"  # A necessary, temporary, lie
   runtime        = "python3.10"
   layer_path     = "${path.root}/layers/python3.10/rasterio_no_numpy/"
 }
