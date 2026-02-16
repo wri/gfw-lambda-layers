@@ -7,6 +7,7 @@ variable "name_suffix" {
   type    = string
   default = ""
 }
+
 variable "hash_script" {
   description = "Path to script to generate hash of source contents"
   type        = string

@@ -1,22 +1,22 @@
-FROM --platform=linux/amd64 public.ecr.aws/lambda/python:3.10
+FROM public.ecr.aws/lambda/python:3.13
 
-ENV NUMPY_VERSION="1.26.4"
-ENV PANDAS_VERSION="1.5.3"
+ENV NUMPY_VERSION="2.4.2"
+ENV PANDAS_VERSION="2.3.3"
 
 WORKDIR /opt
 RUN mkdir -p python
+
+RUN dnf update -y && \
+    dnf install -y zip findutils
 
 RUN pip install --root-user-action=ignore "numpy==${NUMPY_VERSION}" "pandas==${PANDAS_VERSION}" -t python
 
 # Precompile all python packages and remove .py files
 RUN python -m compileall .
-RUN find python/ -type f -name '*.pyc' | while read f; do n=$(echo $f | sed 's/__pycache__\///' | sed 's/.cpython-310//'); cp $f $n; done;
+RUN find python/ -type f -name '*.pyc' | while read f; do n=$(echo $f | sed 's/__pycache__\///' | sed 's/.cpython-313//'); cp $f $n; done;
 RUN find python/ -type d -a -name '__pycache__' -print0 | xargs -0 rm -rf
 RUN find python/ -type f -a -name '*.py' -print0 | xargs -0 rm -f
 
-# Compress all source codes except files listed in .lambdaignore
-RUN yum install -y zip
+# Compress all source code except those files listed in .lambdaignore
 COPY .lambdaignore .
 RUN cat .lambdaignore | xargs zip -9qyr layer.zip python -x
-
-CMD ["/bin/bash"]

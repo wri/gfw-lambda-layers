@@ -8,7 +8,7 @@ ENV GEOPANDAS_VERSION="0.14.4"
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN pip install \
+RUN pip install --root-user-action=ignore \
     "numpy==${NUMPY_VERSION}" \
     "shapely==${SHAPELY_VERSION}" \
     "pandas==${PANDAS_VERSION}" \

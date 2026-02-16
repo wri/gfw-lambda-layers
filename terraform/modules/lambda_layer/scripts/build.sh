@@ -5,14 +5,14 @@ set -e
 LAYER_PATH="${1}"
 IMAGE="globalforestwatch/${2}"
 
-echo -n "${LAYER_PATH}" > "${LAYER_PATH}/foo.txt"
+echo -n "${LAYER_PATH} " > "${LAYER_PATH}/foo.txt"
 date >> "${LAYER_PATH}/foo.txt"
 CONTAINER_NAME="container_$(sha1sum ${LAYER_PATH}/foo.txt |cut -c 1-8)"
 
 pushd "${LAYER_PATH}"
 
 echo "BUILD image ${IMAGE}"
-docker build --no-cache -t "${IMAGE}"  .
+docker build --no-cache -t "${IMAGE}"  . --platform=linux/amd64
 
 echo "CREATE container ${CONTAINER_NAME}"
 docker run -itd --name "${CONTAINER_NAME}" "${IMAGE}" /bin/bash
