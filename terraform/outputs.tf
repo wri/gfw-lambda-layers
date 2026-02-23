@@ -19,7 +19,7 @@ output "py310_pillow_950_arn" {
 }
 
 output "py310_rasterio_138_arn" {
-  value = module.py310_rasterio_138.layer_arn
+  value = module.py310_rasterio_143.layer_arn
 }
 
 output "py310_shapely_185_arn" {
@@ -40,7 +40,7 @@ output "py310_numpy_arn" {
 }
 
 output "py310_rasterio_no_numpy_arn" {
-  value = module.py310_rasterio_no_numpy.layer_arn
+  value = module.py310_rasterio_143.layer_arn
 }
 
 output "py310_shapely_no_numpy_arn" {

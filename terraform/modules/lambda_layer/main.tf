@@ -1,19 +1,16 @@
 locals {
   layer_name = substr("${var.runtime}-${var.name}_${var.module_version}${var.name_suffix}", 0, 64)
   layer_path = trimsuffix(var.layer_path, "/")
-
 }
 
 data "local_file" "dockerfile" {
   filename = "${local.layer_path}/Dockerfile"
 }
 
-
 # Calculate hash of the Docker image source contents
 data "external" "touch" {
   program = [coalesce(var.touch_script, "${path.module}/scripts/touch.sh"), var.bucket, "lambda_layers/${local.layer_name}.zip", "${local.layer_path}/layer.zip"]
 }
-
 
 # Build the Docker image and copy ZIP file to local folder
 resource "null_resource" "build" {

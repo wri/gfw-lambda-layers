@@ -6,7 +6,7 @@ ENV SHAPELY_VERSION="1.8.5.post1"
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN pip install PyYAML==${PYAML_VERSION} shapely==${SHAPELY_VERSION} -t python
+RUN pip install --root-user-action=ignore PyYAML==${PYAML_VERSION} shapely==${SHAPELY_VERSION} -t python
 
 # Precompile all python packages and remove .py files
 RUN python -m compileall .
