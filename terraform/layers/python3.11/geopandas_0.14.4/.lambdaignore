@@ -1,40 +1,15 @@
-# Python packaging noise
+# Packaging metadata
 *-info/*
 */tests/*
 python/pip/*
 python/pkg_resources/*
 python/setuptools/*
 python/wheel/*
-python/easy_install/*
 
-# Rasterio runtime bloat
-python/rasterio/tests/*
-python/rasterio/gdal_data/*
-python/rasterio/*.pyx
-python/rasterio/*.pxi
-
-# These packages live in separate Lambda layers — exclude entirely
+# These packages live in their own layers
 python/numpy/*
 python/numpy.libs/*
 python/pandas/*
 python/pandas.libs/*
 python/shapely/*
 python/shapely.libs/*
-python/pillow/*
-python/PIL/*
-python/pillow.libs/*
-python/mercantile/*
-
-# Compile-time only artifacts
-lib/pkgconfig/*
-lib/*.a
-include/*
-
-# Documentation / metadata
-share/doc/*
-share/man/*
-share/gtk-doc/*
-share/bash-completion/*
-share/aclocal/*
-share/cryptopp/*
-share/libxml2-2.9.10/*

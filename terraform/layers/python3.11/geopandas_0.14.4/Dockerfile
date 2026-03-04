@@ -1,30 +1,40 @@
 FROM public.ecr.aws/lambda/python:3.11
 
-ENV NUMPY_VERSION="1.26.4"
-ENV SHAPELY_VERSION="1.8.5.post1"
-ENV PANDAS_VERSION="1.5.3"
-ENV GEOPANDAS_VERSION="0.14.4"
+ENV GEOPANDAS_VERSION="0.14.4" \
+    NUMPY_VERSION ="1.26.4" \
+    SHAPELY_VERSION="1.8.5.post1" \
+    PANDAS_VERSION="1.5.3"
+
+RUN yum install -y zip binutils && yum clean all
 
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN yum update && yum install -y binutils zip && yum clean all
+RUN pip install --root-user-action=ignore --upgrade pip && \
+    pip install --root-user-action=ignore \
+      --only-binary pyproj,shapely,fiona \
+      --no-binary geopandas \
+      geopandas==${GEOPANDAS_VERSION} \
+      numpy==${NUMPY_VERSION} \
+      shapely==${SHAPELY_VERSION} \
+      pandas==${PANDAS_VERSION} \
+      -t python
 
-RUN pip install --root-user-action=ignore \
-    "numpy==${NUMPY_VERSION}" \
-    "shapely==${SHAPELY_VERSION}" \
-    "pandas==${PANDAS_VERSION}" \
-    "geopandas==${GEOPANDAS_VERSION}" \
-    -t python
+# Remove packages that live in their own layers
+RUN rm -rf python/numpy \
+           python/numpy.libs \
+           python/pandas \
+           python/pandas.libs \
+           python/shapely \
+           python/shapely.libs
 
-# Precompile all Python source and strip __pycache__ dirs
+# Precompile, remove source and cache dirs to shrink the layer
 RUN python -m compileall -q python/ && \
+    find python/ -type f -name '*.py' -print0 | xargs -0 rm -f && \
     find python/ -type d -name '__pycache__' -print0 | xargs -0 rm -rf
 
-# Strip debug symbols from native libs (both system and Python extensions)
-RUN find lib -name '*.so*' -exec strip {} \; && \
-    find python/ -name '*.so*' -exec strip {} \;
+# Strip debug symbols from native extensions
+RUN find python/ -name '*.so*' -exec strip {} \;
 
-# Compress all source codes except files listed in .lambdaignore
 COPY .lambdaignore .
-RUN zip -9qyr layer.zip python -x@.lambdaignore
+RUN cat .lambdaignore | xargs zip -9qyr layer.zip python -x
