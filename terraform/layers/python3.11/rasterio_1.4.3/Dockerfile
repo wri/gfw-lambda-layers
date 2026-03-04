@@ -31,8 +31,8 @@ RUN uv pip install --system "numpy==2.2.6"
 # --no-binary rasterio: force source build (no bundled GDAL wheel)
 # --no-build-isolation-package rasterio: use system numpy from phase 1
 # --build-constraint: prevent build deps from pulling in numpy 2.3+
-RUN echo "numpy==2.2.6" > /tmp/build-constraints.txt && \
-    uv pip compile pyproject.toml --frozen -o /tmp/requirements.txt && \
+RUN uv export --frozen --no-dev -o /tmp/requirements.txt && \
+    echo "numpy==2.2.6" > /tmp/build-constraints.txt && \
     uv pip install --system \
         --no-binary-package rasterio \
         --no-build-isolation-package rasterio \
