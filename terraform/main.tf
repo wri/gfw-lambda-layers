@@ -181,7 +181,7 @@ module "py311_shapely_212" {
   module_version = "2.1.2"
   runtime        = "python3.11"
   name_suffix    = local.name_suffix
-  layer_path     = "${path.root}/layers/python3.10/shapely_2.1.2/"
+  layer_path     = "${path.root}/layers/python3.11/shapely_2.1.2/"
 }
 
 # Not yet ready:
