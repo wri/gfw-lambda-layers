@@ -35,19 +35,20 @@ resource "null_resource" "build" {
   depends_on = [data.external.touch]
 }
 
-resource "aws_s3_bucket_object" "default" {
+resource "aws_s3_object" "default" {
   bucket = var.bucket
   key    = "lambda_layers/${local.layer_name}.zip"
   source = lookup(data.external.touch.result, "source")
-  etag   = filemd5("${local.layer_path}/layer.zip")
 
+  # Track the local file content without fighting S3's ETag semantics.
+  source_hash = filemd5("${local.layer_path}/layer.zip")
   depends_on = [null_resource.build]
 }
 
 resource "aws_lambda_layer_version" "default" {
   layer_name          = replace(local.layer_name, ".", "")
-  s3_bucket           = aws_s3_bucket_object.default.bucket
-  s3_key              = aws_s3_bucket_object.default.key
+  s3_bucket           = aws_s3_object.default.bucket
+  s3_key              = aws_s3_object.default.key
   compatible_runtimes = [var.runtime]
   source_code_hash    = filebase64sha256("${local.layer_path}/layer.zip")
 }
