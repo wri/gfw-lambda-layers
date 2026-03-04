@@ -17,7 +17,7 @@ RUN mkdir /tmp/sqlite \
   && rm -rf /tmp/sqlite
 
 # Install uv
-RUN curl -LsSf https://github.com/astral-sh/uv/releases/download/${UV_VERSION}/uv-installer.sh | sh
+RUN curl -LsSf https://astral.sh/uv/install.sh | UV_UNMANAGED_INSTALL="/root/.local/bin" sh
 ENV PATH="/root/.local/bin:$PATH"
 
 COPY pyproject.toml uv.lock ./
@@ -34,7 +34,7 @@ RUN uv pip install --system "numpy==2.2.6"
 RUN uv export --frozen --no-dev -o /tmp/requirements.txt && \
     echo "numpy==2.2.6" > /tmp/build-constraints.txt && \
     uv pip install --system \
-        --no-binary-package rasterio \
+        --no-binary rasterio \
         --no-build-isolation-package rasterio \
         --build-constraint /tmp/build-constraints.txt \
         --target python \
