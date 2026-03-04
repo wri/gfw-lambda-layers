@@ -54,6 +54,6 @@ RUN find lib -name '*.so*' -exec strip {} \; && \
 
 # Package layer
 COPY .lambdaignore .
-RUN cat .lambdaignore | xargs zip -r9q layer.zip python -x && \
-    cat .lambdaignore | xargs zip -r9q --symlinks layer.zip lib/*.so* share -x && \
+RUN grep -vE '^\s*#|^\s*$' .lambdaignore | xargs zip -r9q layer.zip python -x && \
+    grep -vE '^\s*#|^\s*$' .lambdaignore | xargs zip -r9q --symlinks layer.zip lib/*.so* share -x && \
     zip -r9q --symlinks layer.zip bin/gdal* bin/ogr* bin/geos* bin/nearblack

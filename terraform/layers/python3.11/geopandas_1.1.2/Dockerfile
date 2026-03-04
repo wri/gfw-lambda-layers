@@ -28,13 +28,12 @@ RUN rm -rf python/numpy \
            python/shapely \
            python/shapely.libs
 
-# Precompile, remove source and cache dirs to shrink the layer
+# Precompile, remove cache dirs to shrink the layer
 RUN python -m compileall -q python/ && \
-    find python/ -type f -name '*.py' -print0 | xargs -0 rm -f && \
     find python/ -type d -name '__pycache__' -print0 | xargs -0 rm -rf
 
 # Strip debug symbols from native extensions
 RUN find python/ -name '*.so*' -exec strip {} \;
 
 COPY .lambdaignore .
-RUN cat .lambdaignore | xargs zip -9qyr layer.zip python -x
+RUN grep -vE '^\s*#|^\s*$' .lambdaignore | xargs zip -9qyr layer.zip python -x

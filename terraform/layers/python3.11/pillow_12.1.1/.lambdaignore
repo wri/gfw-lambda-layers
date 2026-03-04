@@ -9,8 +9,3 @@ python/wheel/*
 # numpy lives in its own layer
 python/numpy/*
 python/numpy.libs/*
-
-# pandas test data and type stubs not needed at runtime
-python/pandas/tests/*
-python/pandas/io/parser/c_parser_wrapper.pyi
-python/pandas/**/*.pyi

@@ -7,12 +7,6 @@ python/setuptools/*
 python/wheel/*
 python/easy_install/*
 
-# Rasterio runtime bloat
-python/rasterio/tests/*
-python/rasterio/gdal_data/*
-python/rasterio/*.pyx
-python/rasterio/*.pxi
-
 # These packages live in separate Lambda layers — exclude entirely
 python/numpy/*
 python/numpy.libs/*

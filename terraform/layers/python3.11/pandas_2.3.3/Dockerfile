@@ -19,4 +19,4 @@ RUN find python/ -name '*.so*' -exec strip {} \;
 
 # Compress all source codes except files listed in .lambdaignore
 COPY .lambdaignore .
-RUN cat .lambdaignore | xargs zip -9qyr layer.zip python -x
+RUN grep -vE '^\s*#|^\s*$' .lambdaignore | xargs zip -9qyr layer.zip python -x

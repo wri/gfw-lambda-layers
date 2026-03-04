@@ -21,4 +21,4 @@ RUN pip install --root-user-action=ignore "numpy==${NUMPY_VERSION}" -t python
 RUN find python/ -name '*.so*' -exec strip {} \;
 
 COPY .lambdaignore .
-RUN cat .lambdaignore | xargs zip -9qyr layer.zip python -x
+RUN grep -vE '^\s*#|^\s*$' .lambdaignore | xargs zip -9qyr layer.zip python -x
