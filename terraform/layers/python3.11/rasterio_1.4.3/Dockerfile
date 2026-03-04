@@ -32,11 +32,13 @@ RUN uv pip install --system "numpy==2.2.6"
 # --no-build-isolation-package rasterio: use system numpy from phase 1
 # --build-constraint: prevent build deps from pulling in numpy 2.3+
 RUN echo "numpy==2.2.6" > /tmp/build-constraints.txt && \
-    uv sync --frozen --system \
+    uv pip compile pyproject.toml --frozen -o /tmp/requirements.txt && \
+    uv pip install --system \
         --no-binary-package rasterio \
         --no-build-isolation-package rasterio \
         --build-constraint /tmp/build-constraints.txt \
-        --target python
+        --target python \
+        -r /tmp/requirements.txt
 
 # Remove numpy from target dir — it lives in the numpy layer
 RUN rm -rf python/numpy python/numpy.libs
