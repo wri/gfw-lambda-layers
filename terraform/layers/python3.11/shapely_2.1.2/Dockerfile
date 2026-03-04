@@ -1,6 +1,7 @@
 FROM public.ecr.aws/lambda/python:3.11
 
-ENV PYAML_VERSION="6.0.1" \
+ENV NUMPY_VERSION="2.2.6" \
+    PYAML_VERSION="6.0.1" \
     SHAPELY_VERSION="2.1.2"
 
 WORKDIR /opt
@@ -8,7 +9,11 @@ RUN mkdir -p python
 
 RUN yum update && yum install -y binutils zip && yum clean all
 
-RUN pip install --root-user-action=ignore PyYAML==${PYAML_VERSION} shapely==${SHAPELY_VERSION} -t python
+RUN pip install --root-user-action=ignore \
+    numpy==${NUMPY_VERSION} \
+    PyYAML==${PYAML_VERSION} \
+    shapely==${SHAPELY_VERSION} \
+    -t python
 
 # Precompile, remove source and cache dirs to shrink the layer
 RUN python -m compileall -q python/ && \

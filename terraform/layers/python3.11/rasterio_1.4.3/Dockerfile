@@ -1,7 +1,7 @@
 FROM ghcr.io/lambgeo/lambda-gdal:3.8-python3.11
 
-ENV NUMPY_VERSION=2.2.6 \
-    RASTERIO_VERSION=1.4.3
+ENV NUMPY_VERSION="2.2.6" \
+    RASTERIO_VERSION="1.4.3"
 
 WORKDIR /opt
 RUN mkdir -p python
