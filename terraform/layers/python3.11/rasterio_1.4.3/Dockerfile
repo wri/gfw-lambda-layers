@@ -31,12 +31,12 @@ RUN uv pip install --system "numpy==2.2.6"
 # --no-binary rasterio: force source build (no bundled GDAL wheel)
 # --no-build-isolation-package rasterio: use system numpy from phase 1
 # --build-constraint: prevent build deps from pulling in numpy 2.3+
-RUN uv sync --frozen --system \
-    --no-binary-package rasterio \
-    --no-build-isolation-package rasterio \
-    --build-constraint <(echo "numpy==2.2.6") \
-    --target python
-
+RUN echo "numpy==2.2.6" > /tmp/build-constraints.txt && \
+    uv sync --frozen --system \
+        --no-binary-package rasterio \
+        --no-build-isolation-package rasterio \
+        --build-constraint /tmp/build-constraints.txt \
+        --target python
 
 # Remove numpy from target dir — it lives in the numpy layer
 RUN rm -rf python/numpy python/numpy.libs
