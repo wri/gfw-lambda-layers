@@ -6,7 +6,7 @@ ENV PYAML_VERSION="6.0.1" \
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN yum install -y zip && yum clean all
+RUN yum update && yum install -y binutils zip && yum clean all
 
 RUN pip install --root-user-action=ignore PyYAML==${PYAML_VERSION} shapely==${SHAPELY_VERSION} -t python
 

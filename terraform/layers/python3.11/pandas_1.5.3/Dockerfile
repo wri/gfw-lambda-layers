@@ -5,7 +5,7 @@ ENV PANDAS_VERSION=1.5.3
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN yum install -y zip && yum clean all
+RUN yum update && yum install -y binutils zip && yum clean all
 
 RUN pip install --root-user-action=ignore pandas==${PANDAS_VERSION} -t python
 

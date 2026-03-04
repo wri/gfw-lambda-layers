@@ -5,8 +5,7 @@ ENV PILLOW_VERSION="12.1.1"
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN dnf update -y && \
-    dnf install -y zip findutils
+RUN yum update && yum install -y binutils zip && yum clean all
 
 RUN pip install --root-user-action=ignore "pillow==${PILLOW_VERSION}" -t python
 

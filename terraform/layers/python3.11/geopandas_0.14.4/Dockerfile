@@ -8,7 +8,7 @@ ENV GEOPANDAS_VERSION="0.14.4"
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN yum install -y zip && yum clean all
+RUN yum update && yum install -y binutils zip && yum clean all
 
 RUN pip install --root-user-action=ignore \
     "numpy==${NUMPY_VERSION}" \
