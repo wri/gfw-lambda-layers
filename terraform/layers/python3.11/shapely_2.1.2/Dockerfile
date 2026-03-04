@@ -1,7 +1,7 @@
 FROM public.ecr.aws/lambda/python:3.11
 
 ENV PYAML_VERSION="6.0.1" \
-    SHAPELY_VERSION="1.8.5.post1"
+    SHAPELY_VERSION="2.1.2"
 
 WORKDIR /opt
 RUN mkdir -p python
