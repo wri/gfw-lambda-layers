@@ -1,12 +1,11 @@
 FROM ghcr.io/lambgeo/lambda-gdal:3.8-python3.11
 
-ENV NUMPY_VERSION="2.2.6" \
-    RASTERIO_VERSION="1.4.3"
+ENV UV_VERSION="0.10.8"
 
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN yum install -y gzip make tar zip && yum clean all
+RUN yum install -y curl gzip make tar zip && yum clean all
 
 # Build SQLite from source — sqlite3_trace_v2 requires >= 3.14.0
 RUN mkdir /tmp/sqlite \
@@ -17,27 +16,40 @@ RUN mkdir /tmp/sqlite \
   && make -j$(nproc) --silent && make install \
   && rm -rf /tmp/sqlite
 
-# Install rasterio from source so it links against the layer's GDAL
-# rather than pulling in its own bundled subset
-RUN echo "numpy==${NUMPY_VERSION}" > /tmp/constraints.txt && \
-    pip install --root-user-action=ignore --upgrade pip setuptools && \
-    pip install --root-user-action=ignore \
-      "numpy==${NUMPY_VERSION}" && \
-    pip install --root-user-action=ignore \
-        --no-binary rasterio \
-        --no-build-isolation \
-        "rasterio==${RASTERIO_VERSION}" \
-        -t python
+# Install uv
+RUN curl -LsSf https://github.com/astral-sh/uv/releases/download/${UV_VERSION}/uv-installer.sh
+ENV PATH="/root/.local/bin:$PATH"
 
-# Precompile all Python source and strip __pycache__ dirs
+COPY pyproject.toml uv.lock ./
+
+# Phase 1: install numpy into the system environment so rasterio's build
+# system can find it (required because no-build-isolation-package skips
+# the isolated build env).
+RUN uv pip install --system "numpy==2.2.6"
+
+# Phase 2: install rasterio from source, linked against the layer's GDAL.
+# --no-binary rasterio: force source build (no bundled GDAL wheel)
+# --no-build-isolation-package rasterio: use system numpy from phase 1
+# --build-constraint: prevent build deps from pulling in numpy 2.3+
+RUN uv sync --frozen --system \
+    --no-binary-package rasterio \
+    --no-build-isolation-package rasterio \
+    --build-constraint <(echo "numpy==2.2.6") \
+    --target python
+
+
+# Remove numpy from target dir — it lives in the numpy layer
+RUN rm -rf python/numpy python/numpy.libs
+
+# Precompile and strip __pycache__
 RUN python -m compileall -q python/ && \
     find python/ -type d -name '__pycache__' -print0 | xargs -0 rm -rf
 
-# Strip debug symbols from native libs (both system and Python extensions)
+# Strip debug symbols
 RUN find lib -name '*.so*' -exec strip {} \; && \
     find python/ -name '*.so*' -exec strip {} \;
 
-# Compress all files except those listed in .lambdaignore
+# Package layer
 COPY .lambdaignore .
 RUN cat .lambdaignore | xargs zip -r9q layer.zip python -x && \
     cat .lambdaignore | xargs zip -r9q --symlinks layer.zip lib/*.so* share -x && \
