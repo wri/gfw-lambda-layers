@@ -1,0 +1,458 @@
+FROM public.ecr.aws/lambda/provided:al2023 AS base
+
+LABEL maintainer="lambgeo <geolambdas@gmail.com>"
+
+RUN --mount=type=cache,target=/var/cache/dnf \
+    dnf update -y && \
+    dnf install -y \
+      autoconf libtool flex bison cmake make \
+      tar gzip gcc gcc-c++ automake nasm libtirpc-devel \
+      libxml2-devel openssl-devel curl-devel glibc-langpack-en && \
+    dnf clean all
+
+ENV LOCALE="en_US.UTF-8"
+ENV LANGUAGE=${LOCALE} LC_ALL=${LOCALE} LANG=${LOCALE} LC_CTYPE=${LOCALE}
+
+ENV PREFIX=/opt
+ENV PKG_CONFIG_PATH=${PREFIX}/lib/pkgconfig/ \
+    LD_LIBRARY_PATH=${PREFIX}/lib \
+    PATH=${PREFIX}/bin:${PATH}
+
+WORKDIR /tmp
+
+
+# ────────────────────────────────────────────────────────────────────────────────
+# STAGE: foundational libs that many others depend on (built serially in one
+#        stage so downstream parallel stages can all inherit from here)
+# ────────────────────────────────────────────────────────────────────────────────
+FROM base AS foundations
+
+# pkg-config
+RUN mkdir pkg-config \
+  && curl -sfL https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz | tar zxf - -C pkg-config --strip-components=1 \
+  && cd pkg-config \
+  && CFLAGS="-O2 -Wl,-S" ./configure --prefix=${PREFIX} --with-internal-glib \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf pkg-config
+
+# sqlite (needed by proj, gdal)
+RUN mkdir sqlite \
+  && curl -sfL https://www.sqlite.org/2026/sqlite-autoconf-3510200.tar.gz | tar zxf - -C sqlite --strip-components=1 \
+  && cd sqlite \
+  && CFLAGS="-O2 -Wl,-S -DSQLITE_ENABLE_RTREE=1" CXXFLAGS="-O2 -Wl,-S -DSQLITE_ENABLE_RTREE=1" \
+     ./configure --prefix=${PREFIX} --disable-static \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf sqlite
+
+# libexpat (needed by gdal)
+RUN mkdir libexpat \
+  && curl -sfL https://github.com/libexpat/libexpat/releases/download/R_2_7_4/expat-2.7.4.tar.gz | tar zxf - -C libexpat --strip-components=1 \
+  && cd libexpat \
+  && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure --prefix=${PREFIX} --disable-static \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf libexpat
+
+# nghttp2 (needed by curl)
+RUN mkdir nghttp2 \
+  && curl -sfL https://github.com/nghttp2/nghttp2/releases/download/v1.68.0/nghttp2-1.68.0.tar.gz | tar zxf - -C nghttp2 --strip-components=1 \
+  && cd nghttp2 \
+  && ./configure --enable-lib-only --prefix=${PREFIX} \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf nghttp2
+
+# libcurl (updated from ancient 7.73.0)
+RUN mkdir libcurl \
+  && curl -sfL https://curl.se/download/curl-8.12.1.tar.gz | tar zxf - -C libcurl --strip-components=1 \
+  && cd libcurl \
+  && ./configure --disable-manual --disable-cookies --with-nghttp2=${PREFIX} --prefix=${PREFIX} \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf libcurl
+
+# zstd (needed by blosc, libtiff, gdal)
+RUN mkdir zstd \
+  && curl -sfL https://github.com/facebook/zstd/archive/v1.5.7.tar.gz | tar zxf - -C zstd --strip-components=1 \
+  && cd zstd \
+  && make -j$(nproc) PREFIX=${PREFIX} ZSTD_LEGACY_SUPPORT=0 CFLAGS=-O1 --silent \
+  && make install PREFIX=${PREFIX} ZSTD_LEGACY_SUPPORT=0 CFLAGS=-O1 \
+  && rm -rf zstd
+
+# libjpeg-turbo (needed by libtiff, hdf4, openjpeg, gdal)
+RUN mkdir jpeg \
+  && curl -sfL https://github.com/libjpeg-turbo/libjpeg-turbo/archive/3.1.0.tar.gz | tar zxf - -C jpeg --strip-components=1 \
+  && cd jpeg && mkdir build && cd build \
+  && cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX:PATH=${PREFIX} \
+    -DCMAKE_INSTALL_LIBDIR:PATH=lib \
+    -DCMAKE_C_FLAGS="-O2 -Wl,-S" \
+    -DCMAKE_CXX_FLAGS="-O2 -Wl,-S" \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf jpeg
+
+# libpng (needed by gdal)
+RUN mkdir png \
+  && curl -sfL https://github.com/glennrp/libpng/archive/v1.6.47.tar.gz | tar zxf - -C png --strip-components=1 \
+  && cd png \
+  && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure --prefix=${PREFIX} \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf png
+
+# libdeflate (needed by libtiff)
+RUN mkdir libdeflate \
+  && curl -sfL https://github.com/ebiggers/libdeflate/archive/v1.23.tar.gz | tar zxf - -C libdeflate --strip-components=1 \
+  && cd libdeflate && mkdir build && cd build \
+  && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${PREFIX} -DCMAKE_INSTALL_LIBDIR=lib \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf libdeflate
+
+# lerc (needed by libtiff, gdal)
+RUN mkdir lerc \
+  && curl -sfL https://github.com/Esri/lerc/archive/v4.0.4.tar.gz | tar zxf - -C lerc --strip-components=1 \
+  && cd lerc \
+  && cmake . \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX:PATH=${PREFIX} \
+    -DCMAKE_INSTALL_LIBDIR:PATH=lib \
+    -DCMAKE_C_FLAGS="-O2 -Wl,-S" \
+    -DCMAKE_CXX_FLAGS="-O2 -Wl,-S" \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf lerc
+
+# libtiff (needed by geotiff, gdal)
+RUN mkdir libtiff \
+  && curl -sfL https://download.osgeo.org/libtiff/tiff-4.7.0.tar.gz | tar zxf - -C libtiff --strip-components=1 \
+  && cd libtiff \
+  && LDFLAGS="-Wl,-rpath,'\$\$ORIGIN'" CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
+    --prefix=${PREFIX} \
+    --disable-static \
+    --enable-rpath \
+    --with-lerc-lib-dir=${PREFIX}/lib \
+    --with-lerc-include-dir=${PREFIX}/include \
+    --with-libdeflate-lib-dir=${PREFIX}/lib \
+    --with-libdeflate-include-dir=${PREFIX}/include \
+    --with-jpeg-lib-dir=${PREFIX}/lib \
+    --with-jpeg-include-dir=${PREFIX}/include \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf libtiff
+
+# webp (needed by gdal)
+RUN mkdir webp \
+  && curl -sfL https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.5.0.tar.gz | tar zxf - -C webp --strip-components=1 \
+  && cd webp \
+  && CFLAGS="-O2 -Wl,-S" ./configure --prefix=${PREFIX} \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf webp
+
+# blosc (needed by zarr/gdal)
+RUN mkdir blosc \
+  && curl -sfL https://github.com/Blosc/c-blosc/archive/refs/tags/v1.21.6.tar.gz | tar zxf - -C blosc --strip-components=1 \
+  && cd blosc \
+  && cmake -G"Unix Makefiles" \
+    -DCMAKE_INSTALL_PREFIX:PATH=${PREFIX} \
+    -DCMAKE_INSTALL_LIBDIR:PATH=lib \
+    -DCMAKE_INSTALL_RPATH="$ORIGIN" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_FLAGS="-O2 -Wl,-S" \
+    -DCMAKE_CXX_FLAGS="-O2 -Wl,-S" \
+    -DBUILD_SHARED=ON \
+    -DBUILD_STATIC=OFF \
+    -DBUILD_BENCHMARKS=OFF \
+    -DBUILD_FUZZERS=OFF \
+    -DBUILD_TESTS=OFF \
+    -DPREFER_EXTERNAL_LZ4=ON \
+    -DPREFER_EXTERNAL_ZLIB=ON \
+    -DPREFER_EXTERNAL_ZSTD=ON \
+    -DDEACTIVATE_SNAPPY=OFF . \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf blosc
+
+# szip (needed by hdf4, hdf5)
+RUN mkdir szip \
+  && curl -sfL https://support.hdfgroup.org/ftp/lib-external/szip/2.1.1/src/szip-2.1.1.tar.gz | tar zxf - -C szip --strip-components=1 \
+  && cd szip \
+  && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure --prefix=${PREFIX} --disable-static \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf szip
+
+# hdf4 (needed by gdal for HDF4 format)
+RUN mkdir hdf4 \
+  && curl -sfL https://support.hdfgroup.org/ftp/HDF/releases/HDF4.2.15/src/hdf-4.2.15.tar | tar xvf - -C hdf4 --strip-components=1 \
+  && cd hdf4 \
+  && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" CPPFLAGS="-I/usr/include/tirpc" LIBS="-ltirpc" ./configure \
+    --prefix=${PREFIX} \
+    --with-szlib=${PREFIX} \
+    --with-jpeg=${PREFIX} \
+    --enable-shared \
+    --disable-static \
+    --disable-netcdf \
+    --disable-fortran \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf hdf4
+
+# hdf5 (needed by netcdf, gdal)
+RUN mkdir hdf5 \
+  && curl -sfL https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.14/hdf5-1.14.6/src/hdf5-1.14.6.tar.gz | tar zxf - -C hdf5 --strip-components=1 \
+  && cd hdf5 \
+  && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
+    --prefix=${PREFIX} \
+    --with-szlib=${PREFIX} \
+    --enable-cxx \
+    --disable-static \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf hdf5
+
+# netcdf (needed by gdal)
+RUN mkdir netcdf \
+  && curl -sfL https://github.com/Unidata/netcdf-c/archive/v4.9.3.tar.gz | tar zxf - -C netcdf --strip-components=1 \
+  && cd netcdf \
+  && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" CPPFLAGS="-I${PREFIX}/include" LDFLAGS="-L${PREFIX}/lib" ./configure \
+    --with-default-chunk-size=67108864 \
+    --with-chunk-cache-size=67108864 \
+    --prefix=${PREFIX} \
+    --disable-static \
+    --enable-netcdf4 \
+    --enable-dap \
+    --with-pic \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf netcdf
+
+# cryptopp (needed by gdal for GCS access)
+RUN mkdir cryptopp \
+  && curl -sfL https://github.com/weidai11/cryptopp/archive/refs/tags/CRYPTOPP_8_9_0.tar.gz | tar zxf - -C cryptopp --strip-components=1 \
+  && cd cryptopp \
+  && make -j$(nproc) --silent && make install PREFIX=${PREFIX} \
+  && rm -rf cryptopp
+
+# brotli (HTTP compression, used by curl/gdal)
+RUN mkdir brotli \
+  && curl -sfL https://github.com/google/brotli/archive/refs/tags/v1.1.0.tar.gz | tar zxf - -C brotli --strip-components=1 \
+  && cd brotli && mkdir build && cd build \
+  && cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=${PREFIX} \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DCMAKE_C_FLAGS="-O2 -Wl,-S" \
+    -DCMAKE_CXX_FLAGS="-O2 -Wl,-S" \
+  && cmake --build . -j$(nproc) \
+  && cmake --build . --target install \
+  && rm -rf brotli
+
+# libpq only (needed by gdal for PostGIS — no need for the full server)
+RUN mkdir postgres \
+  && curl -sfL https://ftp.postgresql.org/pub/source/v17.4/postgresql-17.4.tar.gz | tar zxf - -C postgres --strip-components=1 \
+  && cd postgres \
+  && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
+    --prefix=${PREFIX} \
+    --with-openssl \
+    --without-readline \
+    --without-icu \
+    --without-ldap \
+    --without-gssapi \
+    --without-pam \
+    --without-systemd \
+    --without-zlib \
+  && make -j$(nproc) --silent -C src/interfaces/libpq \
+  && make install -C src/interfaces/libpq \
+  && make -j$(nproc) --silent -C src/bin/pg_config \
+  && make install -C src/bin/pg_config \
+  && make install -C src/include \
+  && rm -rf postgres
+
+
+# ────────────────────────────────────────────────────────────────────────────────
+# PARALLEL STAGE A: geos (no deps on proj/geotiff)
+# ────────────────────────────────────────────────────────────────────────────────
+FROM foundations AS build-geos
+
+RUN mkdir /tmp/geos \
+  && curl -sfL https://github.com/libgeos/geos/archive/refs/tags/3.13.1.tar.gz | tar zxf - -C /tmp/geos --strip-components=1 \
+  && cd /tmp/geos && mkdir build && cd build \
+  && cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX:PATH=${PREFIX} \
+    -DCMAKE_INSTALL_LIBDIR:PATH=lib \
+    -DCMAKE_C_FLAGS="-O2 -Wl,-S" \
+    -DCMAKE_CXX_FLAGS="-O2 -Wl,-S" \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf /tmp/geos
+
+
+# ────────────────────────────────────────────────────────────────────────────────
+# PARALLEL STAGE B: proj (depends on sqlite, curl — both in foundations)
+# ────────────────────────────────────────────────────────────────────────────────
+FROM foundations AS build-proj
+
+RUN mkdir /tmp/proj \
+  && curl -sfL https://github.com/OSGeo/proj/archive/9.5.1.tar.gz | tar zxf - -C /tmp/proj --strip-components=1 \
+  && cd /tmp/proj && mkdir build && cd build \
+  && cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX:PATH=${PREFIX} \
+    -DCMAKE_INSTALL_LIBDIR:PATH=lib \
+    -DCMAKE_INSTALL_INCLUDEDIR:PATH=include \
+    -DBUILD_TESTING=OFF \
+    -DCMAKE_C_FLAGS="-O2 -Wl,-S" \
+    -DCMAKE_CXX_FLAGS="-O2 -Wl,-S" \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf /tmp/proj
+
+
+# ────────────────────────────────────────────────────────────────────────────────
+# PARALLEL STAGE C: openjpeg (depends on libjpeg, libpng, zstd — all foundations)
+# ────────────────────────────────────────────────────────────────────────────────
+FROM foundations AS build-openjpeg
+
+RUN mkdir /tmp/openjpeg \
+  && curl -sfL https://github.com/uclouvain/openjpeg/archive/v2.5.3.tar.gz | tar zxf - -C /tmp/openjpeg --strip-components=1 \
+  && cd /tmp/openjpeg && mkdir build && cd build \
+  && cmake .. \
+    -DBUILD_THIRDPARTY:BOOL=ON \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX:PATH=${PREFIX} \
+    -DCMAKE_INSTALL_LIBDIR:PATH=lib \
+    -DCMAKE_C_FLAGS="-O2 -Wl,-S" \
+    -DCMAKE_CXX_FLAGS="-O2 -Wl,-S" \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf /tmp/openjpeg
+
+
+# ────────────────────────────────────────────────────────────────────────────────
+# STAGE: libgeotiff — depends on proj, libtiff (proj from parallel stage)
+# ────────────────────────────────────────────────────────────────────────────────
+FROM foundations AS build-geotiff
+COPY --from=build-proj ${PREFIX}/lib/ ${PREFIX}/lib/
+COPY --from=build-proj ${PREFIX}/include/ ${PREFIX}/include/
+COPY --from=build-proj ${PREFIX}/bin/ ${PREFIX}/bin/
+COPY --from=build-proj ${PREFIX}/share/ ${PREFIX}/share/
+
+RUN mkdir /tmp/libgeotiff \
+  && curl -sfL https://github.com/OSGeo/libgeotiff/releases/download/1.7.4/libgeotiff-1.7.4.tar.gz | tar zxf - -C /tmp/libgeotiff --strip-components=1 \
+  && cd /tmp/libgeotiff \
+  && LDFLAGS="-Wl,-rpath,'\$\$ORIGIN'" CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
+    --prefix=${PREFIX} \
+    --with-proj=${PREFIX} \
+    --with-jpeg=${PREFIX} \
+    --with-zip=yes \
+    --with-zlib \
+    --with-libtiff=${PREFIX} \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf /tmp/libgeotiff
+
+
+# ────────────────────────────────────────────────────────────────────────────────
+# STAGE: GDAL — depends on everything
+# ────────────────────────────────────────────────────────────────────────────────
+FROM foundations AS build-gdal
+
+# Merge all parallel build outputs
+COPY --from=build-geos    ${PREFIX}/lib/     ${PREFIX}/lib/
+COPY --from=build-geos    ${PREFIX}/include/ ${PREFIX}/include/
+COPY --from=build-geos    ${PREFIX}/bin/     ${PREFIX}/bin/
+
+COPY --from=build-proj    ${PREFIX}/lib/     ${PREFIX}/lib/
+COPY --from=build-proj    ${PREFIX}/include/ ${PREFIX}/include/
+COPY --from=build-proj    ${PREFIX}/bin/     ${PREFIX}/bin/
+COPY --from=build-proj    ${PREFIX}/share/   ${PREFIX}/share/
+
+COPY --from=build-openjpeg ${PREFIX}/lib/     ${PREFIX}/lib/
+COPY --from=build-openjpeg ${PREFIX}/include/ ${PREFIX}/include/
+
+COPY --from=build-geotiff  ${PREFIX}/lib/     ${PREFIX}/lib/
+COPY --from=build-geotiff  ${PREFIX}/include/ ${PREFIX}/include/
+COPY --from=build-geotiff  ${PREFIX}/bin/     ${PREFIX}/bin/
+
+RUN mkdir /tmp/gdal \
+  && curl -sfL https://github.com/OSGeo/gdal/archive/refs/tags/v3.12.1.tar.gz | tar zxf - -C /tmp/gdal --strip-components=1 \
+  && cd /tmp/gdal && mkdir build && cd build \
+  && cmake .. \
+    -DGDAL_USE_EXTERNAL_LIBS=ON \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX:PATH=${PREFIX} \
+    -DCMAKE_INSTALL_LIBDIR:PATH=lib \
+    -DCMAKE_C_FLAGS="-O2 -Wl,-S" \
+    -DCMAKE_CXX_FLAGS="-O2 -Wl,-S" \
+    -DGDAL_SET_INSTALL_RELATIVE_RPATH=ON \
+    -DGDAL_USE_TIFF_INTERNAL=OFF \
+    -DGDAL_USE_GEOTIFF_INTERNAL=OFF \
+    -DGDAL_USE_LERC_INTERNAL=OFF \
+    -DLERC_INCLUDE_DIR=${PREFIX}/include \
+    -DLERC_LIBRARY=${PREFIX}/lib/libLercLib.so \
+    -DPNG_PNG_INCLUDE_DIR=${PREFIX}/include \
+    -DPNG_LIBRARY_RELEASE=${PREFIX}/lib/libpng.so \
+    -DBUILD_PYTHON_BINDINGS=OFF \
+  && cmake --build . -j$(nproc) \
+  && cmake --build . --target install \
+  && rm -rf /tmp/gdal
+
+
+# ────────────────────────────────────────────────────────────────────────────────
+# STAGE: patchelf + Python — run in parallel with GDAL build
+# ────────────────────────────────────────────────────────────────────────────────
+FROM foundations AS build-python
+
+# patchelf
+RUN mkdir /tmp/patchelf \
+  && curl -sfL https://github.com/NixOS/patchelf/archive/0.18.0.tar.gz | tar zxf - -C /tmp/patchelf --strip-components=1 \
+  && cd /tmp/patchelf && ./bootstrap.sh && ./configure \
+  && make -j$(nproc) --silent && make install \
+  && rm -rf /tmp/patchelf
+
+ENV USR_LOCAL_BIN="/usr/local/bin"
+ENV UV_LINK_MODE=copy \
+    UV_COMPILE_BYTECODE=1 \
+    UV_UNMANAGED_INSTALL=${USR_LOCAL_BIN} \
+    PATH=${USR_LOCAL_BIN}:${PATH}
+
+RUN curl -LsSf https://github.com/astral-sh/uv/releases/download/0.10.8/uv-installer.sh | sh && \
+    uv pip install \
+      numpy==2.4.2 \
+      rasterio==1.5.1 \
+      --no-binary rasterio \
+      -p 3.13 \
+      -t ${PREFIX}/python
+
+
+# ────────────────────────────────────────────────────────────────────────────────
+# FINAL ASSEMBLY STAGE
+# ────────────────────────────────────────────────────────────────────────────────
+FROM public.ecr.aws/lambda/provided:al2023 AS runner
+
+RUN --mount=type=cache,target=/var/cache/dnf \
+    dnf update -y && dnf install -y findutils zip && dnf clean all
+
+ENV PREFIX=/opt
+WORKDIR ${PREFIX}
+
+COPY --from=build-gdal   ${PREFIX}/lib/     ${PREFIX}/lib/
+COPY --from=build-gdal   ${PREFIX}/include/ ${PREFIX}/include/
+COPY --from=build-gdal   ${PREFIX}/share/   ${PREFIX}/share/
+COPY --from=build-gdal   ${PREFIX}/bin/     ${PREFIX}/bin/
+COPY --from=build-python ${PREFIX}/python/  ${PREFIX}/python/
+
+# patchelf is in /usr/local/bin in build-python stage
+COPY --from=build-python /usr/local/bin/patchelf /usr/local/bin/patchelf
+
+# Clean up libs not used by GDAL
+RUN rm -f ${PREFIX}/lib/libturbojpeg.so* \
+          ${PREFIX}/lib/libwebpmux.so* \
+          ${PREFIX}/lib/libwebpdemux.so* \
+          ${PREFIX}/lib/libwebpdecoder.so*
+
+# Fix RPATHs so libs are found relative to their location at runtime
+RUN for i in ${PREFIX}/bin/*;     do patchelf --force-rpath --set-rpath '$ORIGIN/../lib' "$i"; done && \
+    for i in ${PREFIX}/lib/*.so*; do patchelf --force-rpath --set-rpath '$ORIGIN'        "$i" 2>/dev/null || true; done
+
+# hdf4 needs libtirpc at runtime
+RUN cp /usr/lib64/libtirpc.so* ${PREFIX}/lib/
+
+ENV GDAL_DATA=${PREFIX}/share/gdal \
+    PROJ_LIB=${PREFIX}/share/proj \
+    GDAL_CONFIG=${PREFIX}/bin/gdal-config \
+    GEOS_CONFIG=${PREFIX}/bin/geos-config \
+    PATH=${PREFIX}/bin:${PATH}
+
+# Compress all files except those listed in .lambdaignore
+COPY .lambdaignore .
+RUN cat .lambdaignore | xargs zip -r9q layer.zip python -x && \
+    cat .lambdaignore | xargs zip -r9q --symlinks layer.zip lib/*.so* share -x && \
+    zip -r9q --symlinks layer.zip bin/gdal* bin/ogr* bin/geos* bin/nearblack \
