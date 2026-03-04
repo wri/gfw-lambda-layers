@@ -109,6 +109,18 @@ module "py310_shapely_no_numpy" {
   layer_path     = "${path.root}/layers/python3.10/shapely_no_numpy/"
 }
 
+
+# These are new:
+module "py311_rasterio_143" {
+  source         = "./modules/lambda_layer"
+  bucket         = local.core.gfw_pipelines_bucket_name
+  name           = "rasterio"
+  module_version = "1.4.3"
+  runtime        = "python3.11"
+  layer_path     = "${path.root}/layers/python3.11/rasterio_1.4.3/"
+}
+
+
 # Not yet ready:
 # module "py313_geopandas_112" {
 #   source         = "./modules/lambda_layer"
@@ -188,6 +200,7 @@ module "ssm" {
     py310_rasterio_143_arn      = module.py310_rasterio_143.layer_arn
     py310_rasterio_no_numpy_arn = module.py310_rasterio_143.layer_arn
     py310_shapely_no_numpy_arn  = module.py310_shapely_no_numpy.layer_arn
+    py311_rasterio_143_arn      = module.py311_rasterio_143.layer_arn
 #   py313_geopandas_112_arn     = module.py313_geopandas_112.layer_arn
 #   py313_mercantile_121_arn    = module.py313_mercantile_121.layer_arn
 #   py313_numpy_242_arn         = module.py313_numpy_242.layer_arn
