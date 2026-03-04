@@ -6,7 +6,7 @@ python/pkg_resources/*
 python/setuptools/*
 python/wheel/*
 
-# numpy pure-Python source and type stubs are not needed at runtime —
-# all real functionality is in the compiled .so extensions
-python/numpy/**/*.py
+# numpy test suite and typing stubs
+python/numpy/**/tests/*
+python/numpy/**/typing/*
 python/numpy/**/*.pyi
