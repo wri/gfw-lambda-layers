@@ -1,0 +1,22 @@
+[project]
+name = "rasterio-layer"
+version = "0.1.0"
+requires-python = "==3.11.*"
+dependencies = [
+    "rasterio==1.4.3",
+    "numpy==2.2.6",  # kept here so uv resolves it; removed from zip via .lambdaignore
+]
+
+[tool.uv]
+# numpy 2.3+ switched to manylinux_2_28 wheels, which require glibc 2.28.
+# The AL2-based Python 3.11 Lambda image only has glibc 2.17, so we must
+# stay on 2.2.x which still ships manylinux2014 (glibc 2.17) wheels.
+build-constraint-dependencies = ["numpy==2.2.6"]
+
+# rasterio must be built from source to link against the layer's GDAL
+# rather than using its bundled wheel subset.
+no-build-isolation-package = ["rasterio"]
+
+environments = [
+    "sys_platform == 'linux' and python_version == '3.11'",
+]
