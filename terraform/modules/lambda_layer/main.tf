@@ -24,7 +24,9 @@ data "external" "touch" {
 # Build the Docker image and copy ZIP file to local folder
 resource "null_resource" "build" {
   triggers = {
-    hash = data.external.source_hash.result.hash
+    dockerfile_hash = filemd5(data.local_file.dockerfile.filename)
+    local_zip_md5   = data.external.touch.result.local_md5
+    downloaded      = data.external.touch.result.downloaded
   }
 
   provisioner "local-exec" {
