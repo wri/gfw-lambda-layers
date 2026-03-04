@@ -1,7 +1,7 @@
 FROM public.ecr.aws/lambda/python:3.11
 
 ENV GEOPANDAS_VERSION="0.14.4" \
-    NUMPY_VERSION ="1.26.4" \
+    NUMPY_VERSION="1.26.4" \
     SHAPELY_VERSION="1.8.5.post1" \
     PANDAS_VERSION="1.5.3"
 
