@@ -1,11 +1,11 @@
 FROM public.ecr.aws/lambda/python:3.11
 
-ENV GEOPANDAS_VERSION="0.14.4" \
-    NUMPY_VERSION="1.26.4" \
-    SHAPELY_VERSION="1.8.5.post1" \
-    PANDAS_VERSION="1.5.3"
+ENV GEOPANDAS_VERSION="1.1.2" \
+    NUMPY_VERSION="2.4.0" \
+    SHAPELY_VERSION="2.1.2" \
+    PANDAS_VERSION="2.3.3"
 
-RUN yum install -y zip binutils && yum clean all
+RUN yum update && yum install -y zip binutils && yum clean all
 
 WORKDIR /opt
 RUN mkdir -p python
