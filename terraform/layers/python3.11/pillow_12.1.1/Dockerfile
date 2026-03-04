@@ -14,8 +14,7 @@ RUN python -m compileall -q python/ && \
     find python/ -type d -name '__pycache__' -print0 | xargs -0 rm -rf
 
 # Strip debug symbols from native libs (both system and Python extensions)
-RUN find lib -name '*.so*' -exec strip {} \; && \
-    find python/ -name '*.so*' -exec strip {} \;
+RUN find python/ -name '*.so*' -exec strip {} \;
 
 # Compress all source code except those files listed in .lambdaignore
 COPY .lambdaignore .
