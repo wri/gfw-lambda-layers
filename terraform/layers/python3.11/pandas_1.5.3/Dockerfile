@@ -7,7 +7,7 @@ RUN mkdir -p python
 
 RUN yum update && yum install -y binutils zip && yum clean all
 
-RUN pip install --root-user-action=ignore pandas==${PANDAS_VERSION} -t python
+RUN pip install --root-user-action=ignore --only-binary pandas pandas==${PANDAS_VERSION} -t python
 
 # Precompile all Python source and strip __pycache__ dirs
 RUN python -m compileall -q python/ && \
