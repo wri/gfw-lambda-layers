@@ -17,8 +17,8 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_production }}
         AWS_REGION: ${{ secrets.aws_region_production }}
       run: |
-        ./scripts/infra plan
-        ./scripts/infra apply
+        ./scripts/infra plan -out=tfplan
+        ./scripts/infra apply -auto-approve tfplan
 
     - name: Deploy staging
       if: success() && github.ref == 'refs/heads/staging'
@@ -28,8 +28,8 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_staging }}
         AWS_REGION: ${{ secrets.aws_region_staging }}
       run: |
-        ./scripts/infra plan
-        ./scripts/infra apply
+        ./scripts/infra plan -out=tfplan
+        ./scripts/infra apply -auto-approve tfplan
 
     - name: Deploy dev
       if: success() && github.ref == 'refs/heads/dev'
@@ -39,5 +39,5 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_dev }}
         AWS_REGION: ${{ secrets.aws_region_dev }}
       run: |
-        ./scripts/infra plan
-        ./scripts/infra apply
+        ./scripts/infra plan -out=tfplan
+        ./scripts/infra apply -auto-approve tfplan
