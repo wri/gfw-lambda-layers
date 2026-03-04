@@ -120,13 +120,13 @@ module "py310_shapely_no_numpy" {
 
 
 # These are new:
-module "py311_geopandas_0144" {
+module "py311_geopandas_112" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
   name           = "geopandas"
-  module_version = "0.14.4"
+  module_version = "1.1.2"
   runtime        = "python3.11"
-  layer_path     = "${path.root}/layers/python3.11/geopandas_0.14.4/"
+  layer_path     = "${path.root}/layers/python3.11/geopandas_1.1.2/"
 }
 
 module "py311_mercantile_121" {
@@ -138,22 +138,22 @@ module "py311_mercantile_121" {
   layer_path     = "${path.root}/layers/python3.11/mercantile_1.2.1/"
 }
 
-module "py311_numpy_1264" {
+module "py311_numpy_240" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
   name           = "numpy"
-  module_version = "1.26.4"
+  module_version = "2.4.0"
   runtime        = "python3.11"
-  layer_path     = "${path.root}/layers/python3.11/numpy_1.26.4/"
+  layer_path     = "${path.root}/layers/python3.11/numpy_2.4.0/"
 }
 
-module "py311_pandas_153" {
+module "py311_pandas_233" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
   name           = "pandas"
-  module_version = "1.5.3"
+  module_version = "2.3.3"
   runtime        = "python3.11"
-  layer_path     = "${path.root}/layers/python3.11/pandas_1.5.3/"
+  layer_path     = "${path.root}/layers/python3.11/pandas_2.3.3/"
 }
 
 module "py311_pillow_1211" {
@@ -174,14 +174,14 @@ module "py311_rasterio_143" {
   layer_path     = "${path.root}/layers/python3.11/rasterio_1.4.3/"
 }
 
-module "py311_shapely_185" {
+module "py311_shapely_212" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
   name           = "shapely"
-  module_version = "1.8.5"
+  module_version = "2.1.2"
   runtime        = "python3.11"
   name_suffix    = local.name_suffix
-  layer_path     = "${path.root}/layers/python3.10/shapely_1.8.5post1/"
+  layer_path     = "${path.root}/layers/python3.10/shapely_2.1.2/"
 }
 
 # Not yet ready:
@@ -265,13 +265,13 @@ module "ssm" {
     py310_rasterio_no_numpy_arn = module.py310_rasterio_143.layer_arn
     py310_shapely_no_numpy_arn  = module.py310_shapely_no_numpy.layer_arn
 
-    py311_geopandas_0144_arn    = module.py311_geopandas_0144.layer_arn
+    py311_geopandas_112_arn     = module.py311_geopandas_112.layer_arn
     py311_mercantile_121_arn    = module.py311_mercantile_121.layer_arn
-    py311_numpy_1264_arn        = module.py311_numpy_1264.layer_arn
-    py311_pandas_153            = module.py311_pandas_153.layer_arn
+    py311_numpy_240_arn         = module.py311_numpy_240.layer_arn
+    py311_pandas_233            = module.py311_pandas_233.layer_arn
     py311_pillow_1211_arn       = module.py311_pillow_1211.layer_arn
     py311_rasterio_143_arn      = module.py311_rasterio_143.layer_arn
-    py311_shapely_185_arn       = module.py311_shapely_185.layer_arn
+    py311_shapely_212_arn       = module.py311_shapely_212.layer_arn
 
 #   py313_geopandas_112_arn     = module.py313_geopandas_112.layer_arn
 #   py313_mercantile_121_arn    = module.py313_mercantile_121.layer_arn
