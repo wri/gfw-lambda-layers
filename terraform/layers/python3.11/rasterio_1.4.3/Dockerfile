@@ -19,13 +19,12 @@ RUN mkdir /tmp/sqlite \
 
 # Install rasterio from source so it links against the layer's GDAL
 # rather than pulling in its own bundled subset
-RUN echo "numpy==${NUMPY_VERSION}" > /tmp/constraints.txt
-
-RUN pip install --root-user-action=ignore --upgrade pip setuptools && \
+RUN echo "numpy==${NUMPY_VERSION}" > /tmp/constraints.txt && \
+    pip install --root-user-action=ignore --upgrade pip setuptools && \
     pip install --root-user-action=ignore \
         --constraint /tmp/constraints.txt \
-        "rasterio==${RASTERIO_VERSION}" \
         --no-binary rasterio \
+        "rasterio==${RASTERIO_VERSION}" \
         -t python
 
 # Precompile all Python source and strip __pycache__ dirs
