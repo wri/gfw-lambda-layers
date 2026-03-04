@@ -1,6 +1,6 @@
 FROM public.ecr.aws/lambda/python:3.11
 
-ENV NUMPY_VERSION="2.4.0"
+ENV NUMPY_VERSION="2.2.6"
 ENV PANDAS_VERSION="2.3.3"
 
 WORKDIR /opt
