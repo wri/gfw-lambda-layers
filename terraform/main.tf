@@ -52,6 +52,15 @@ module "py310_pillow_950" {
   layer_path     = "${path.root}/layers/python3.10/pillow_9.5.0/"
 }
 
+module "py310_pillow_1211" {
+  source         = "./modules/lambda_layer"
+  bucket         = local.core.gfw_pipelines_bucket_name
+  name           = "pillow"
+  module_version = "12.1.1"
+  runtime        = "python3.10"
+  layer_path     = "${path.root}/layers/python3.10/pillow_12.1.1/"
+}
+
 module "py310_rasterio_143" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
@@ -251,6 +260,7 @@ module "ssm" {
     py310_numpy_arn             = module.py310_numpy.layer_arn
     py310_pandas_no_numpy_arn   = module.py310_pandas_no_numpy.layer_arn
     py310_pillow_950_arn        = module.py310_pillow_950.layer_arn
+    py310_pillow_1211_arn       = module.py310_pillow_1211.layer_arn
     py310_rasterio_143_arn      = module.py310_rasterio_143.layer_arn
     py310_rasterio_no_numpy_arn = module.py310_rasterio_143.layer_arn
     py310_shapely_no_numpy_arn  = module.py310_shapely_no_numpy.layer_arn
