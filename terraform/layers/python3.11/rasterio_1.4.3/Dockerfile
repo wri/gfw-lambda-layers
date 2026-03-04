@@ -22,8 +22,10 @@ RUN mkdir /tmp/sqlite \
 RUN echo "numpy==${NUMPY_VERSION}" > /tmp/constraints.txt && \
     pip install --root-user-action=ignore --upgrade pip setuptools && \
     pip install --root-user-action=ignore \
-        --constraint /tmp/constraints.txt \
+      "numpy==${NUMPY_VERSION}" && \
+    pip install --root-user-action=ignore \
         --no-binary rasterio \
+        --no-build-isolation \
         "rasterio==${RASTERIO_VERSION}" \
         -t python
 
