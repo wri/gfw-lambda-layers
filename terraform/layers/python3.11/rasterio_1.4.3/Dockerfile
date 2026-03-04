@@ -1,6 +1,7 @@
 FROM ghcr.io/lambgeo/lambda-gdal:3.8-python3.11
 
-ENV UV_VERSION="0.10.8"
+ENV UV_VERSION="0.10.8" \
+    NUMPY_VERSION="2.2.6"
 
 WORKDIR /opt
 RUN mkdir -p python
@@ -25,14 +26,14 @@ COPY pyproject.toml uv.lock ./
 # Phase 1: install numpy into the system environment so rasterio's build
 # system can find it (required because no-build-isolation-package skips
 # the isolated build env).
-RUN uv pip install --system "numpy==2.2.6"
+RUN uv pip install --system "numpy==${NUMPY_VERSION}"
 
 # Phase 2: install rasterio from source, linked against the layer's GDAL.
 # --no-binary rasterio: force source build (no bundled GDAL wheel)
 # --no-build-isolation-package rasterio: use system numpy from phase 1
 # --build-constraint: prevent build deps from pulling in numpy 2.3+
 RUN uv export --frozen --no-dev -o /tmp/requirements.txt && \
-    echo "numpy==2.2.6" > /tmp/build-constraints.txt && \
+    echo "numpy==${NUMPY_VERSION}" > /tmp/build-constraints.txt && \
     uv pip install --system \
         --no-binary rasterio \
         --no-build-isolation-package rasterio \
@@ -55,4 +56,4 @@ RUN find lib -name '*.so*' -exec strip {} \; && \
 COPY .lambdaignore .
 RUN cat .lambdaignore | xargs zip -r9q layer.zip python -x && \
     cat .lambdaignore | xargs zip -r9q --symlinks layer.zip lib/*.so* share -x && \
-    zip -r9q --symlinks layer.zip bin/gdal* bin/ogr* bin/geos* bin/nearblack \
+    zip -r9q --symlinks layer.zip bin/gdal* bin/ogr* bin/geos* bin/nearblack
