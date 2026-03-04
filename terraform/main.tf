@@ -52,6 +52,15 @@ module "py310_pillow_950" {
   layer_path     = "${path.root}/layers/python3.10/pillow_9.5.0/"
 }
 
+module "py310_pillow_1211" {
+  source         = "./modules/lambda_layer"
+  bucket         = local.core.gfw_pipelines_bucket_name
+  name           = "pillow"
+  module_version = "12.1.1"
+  runtime        = "python3.10"
+  layer_path     = "${path.root}/layers/python3.10/pillow_12.1.1/"
+}
+
 module "py310_rasterio_143" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
@@ -109,70 +118,136 @@ module "py310_shapely_no_numpy" {
   layer_path     = "${path.root}/layers/python3.10/shapely_no_numpy/"
 }
 
+
 # These are new:
-module "py313_geopandas_112" {
+module "py311_geopandas_0144" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
   name           = "geopandas"
-  module_version = "1.1.2"
-  runtime        = "python3.13"
-  layer_path     = "${path.root}/layers/python3.13/geopandas_1.1.2/"
+  module_version = "0.14.4"
+  runtime        = "python3.11"
+  layer_path     = "${path.root}/layers/python3.11/geopandas_0.14.4/"
 }
 
-module "py313_mercantile_121" {
+module "py311_mercantile_121" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
   name           = "mercantile"
   module_version = "1.2.1"
-  runtime        = "python3.13"
-  layer_path     = "${path.root}/layers/python3.13/mercantile_1.2.1/"
+  runtime        = "python3.11"
+  layer_path     = "${path.root}/layers/python3.11/mercantile_1.2.1/"
 }
 
-module "py313_numpy_242" {
+module "py311_numpy_1264" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
   name           = "numpy"
-  module_version = "2.4.2"
-  runtime        = "python3.13"
-  layer_path     = "${path.root}/layers/python3.13/numpy_2.4.2/"
+  module_version = "1.26.4"
+  runtime        = "python3.11"
+  layer_path     = "${path.root}/layers/python3.11/numpy_1.26.4/"
 }
 
-module "py313_pandas_233" {
+module "py311_pandas_153" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
   name           = "pandas"
-  module_version = "2.3.3"
-  runtime        = "python3.13"
-  layer_path     = "${path.root}/layers/python3.13/pandas_2.3.3/"
+  module_version = "1.5.3"
+  runtime        = "python3.11"
+  layer_path     = "${path.root}/layers/python3.11/pandas_1.5.3/"
 }
 
-module "py313_pillow_1210" {
+module "py311_pillow_1211" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
   name           = "pillow"
-  module_version = "12.1.0"
-  runtime        = "python3.13"
-  layer_path     = "${path.root}/layers/python3.13/pillow_12.1.0/"
+  module_version = "12.1.1"
+  runtime        = "python3.11"
+  layer_path     = "${path.root}/layers/python3.11/pillow_12.1.1/"
 }
 
-module "py313_rasterio_144" {
+module "py311_rasterio_143" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
   name           = "rasterio"
-  module_version = "1.4.4"
-  runtime        = "python3.13"
-  layer_path     = "${path.root}/layers/python3.13/rasterio_1.4.4/"
+  module_version = "1.4.3"
+  runtime        = "python3.11"
+  layer_path     = "${path.root}/layers/python3.11/rasterio_1.4.3/"
 }
 
-module "py313_shapely_212" {
+module "py311_shapely_185" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
   name           = "shapely"
-  module_version = "2.1.2"
-  runtime        = "python3.13"
+  module_version = "1.8.5"
+  runtime        = "python3.11"
   name_suffix    = local.name_suffix
-  layer_path     = "${path.root}/layers/python3.13/shapely_2.1.2/"
+  layer_path     = "${path.root}/layers/python3.10/shapely_1.8.5post1/"
 }
+
+# Not yet ready:
+# module "py313_geopandas_112" {
+#   source         = "./modules/lambda_layer"
+#   bucket         = local.core.gfw_pipelines_bucket_name
+#   name           = "geopandas"
+#   module_version = "1.1.2"
+#   runtime        = "python3.13"
+#   layer_path     = "${path.root}/layers/python3.13/geopandas_1.1.2/"
+# }
+#
+# module "py313_mercantile_121" {
+#   source         = "./modules/lambda_layer"
+#   bucket         = local.core.gfw_pipelines_bucket_name
+#   name           = "mercantile"
+#   module_version = "1.2.1"
+#   runtime        = "python3.13"
+#   layer_path     = "${path.root}/layers/python3.13/mercantile_1.2.1/"
+# }
+#
+# module "py313_numpy_242" {
+#   source         = "./modules/lambda_layer"
+#   bucket         = local.core.gfw_pipelines_bucket_name
+#   name           = "numpy"
+#   module_version = "2.4.2"
+#   runtime        = "python3.13"
+#   layer_path     = "${path.root}/layers/python3.13/numpy_2.4.2/"
+# }
+#
+# module "py313_pandas_233" {
+#   source         = "./modules/lambda_layer"
+#   bucket         = local.core.gfw_pipelines_bucket_name
+#   name           = "pandas"
+#   module_version = "2.3.3"
+#   runtime        = "python3.13"
+#   layer_path     = "${path.root}/layers/python3.13/pandas_2.3.3/"
+# }
+#
+# module "py313_pillow_1210" {
+#   source         = "./modules/lambda_layer"
+#   bucket         = local.core.gfw_pipelines_bucket_name
+#   name           = "pillow"
+#   module_version = "12.1.0"
+#   runtime        = "python3.13"
+#   layer_path     = "${path.root}/layers/python3.13/pillow_12.1.0/"
+# }
+#
+# module "py313_rasterio_151" {
+#   source         = "./modules/lambda_layer"
+#   bucket         = local.core.gfw_pipelines_bucket_name
+#   name           = "rasterio"
+#   module_version = "1.5.1"
+#   runtime        = "python3.13"
+#   layer_path     = "${path.root}/layers/python3.13/rasterio_1.5.1/"
+# }
+#
+# module "py313_shapely_212" {
+#   source         = "./modules/lambda_layer"
+#   bucket         = local.core.gfw_pipelines_bucket_name
+#   name           = "shapely"
+#   module_version = "2.1.2"
+#   runtime        = "python3.13"
+#   name_suffix    = local.name_suffix
+#   layer_path     = "${path.root}/layers/python3.13/shapely_2.1.2/"
+# }
 
 module "ssm" {
   source      = "git::https://github.com/wri/gfw-terraform-modules.git//terraform/modules/ssm?ref=v0.4.2.13"
@@ -185,16 +260,26 @@ module "ssm" {
     py310_numpy_arn             = module.py310_numpy.layer_arn
     py310_pandas_no_numpy_arn   = module.py310_pandas_no_numpy.layer_arn
     py310_pillow_950_arn        = module.py310_pillow_950.layer_arn
+    py310_pillow_1211_arn       = module.py310_pillow_1211.layer_arn
     py310_rasterio_143_arn      = module.py310_rasterio_143.layer_arn
     py310_rasterio_no_numpy_arn = module.py310_rasterio_143.layer_arn
     py310_shapely_no_numpy_arn  = module.py310_shapely_no_numpy.layer_arn
-    py313_geopandas_112_arn     = module.py313_geopandas_112.layer_arn
-    py313_mercantile_121_arn    = module.py313_mercantile_121.layer_arn
-    py313_numpy_242_arn         = module.py313_numpy_242.layer_arn
-    py313_pandas_233_arn        = module.py313_pandas_233.layer_arn
-    py313_pillow_1210_arn       = module.py313_pillow_1210.layer_arn
-    py313_rasterio_144_arn      = module.py313_rasterio_144.layer_arn
-    py313_shapely_212_arn       = module.py313_shapely_212.layer_arn
+
+    py311_geopandas_0144_arn    = module.py311_geopandas_0144.layer_arn
+    py311_mercantile_121_arn    = module.py311_mercantile_121.layer_arn
+    py311_numpy_1264_arn        = module.py311_numpy_1264.layer_arn
+    py311_pandas_153            = module.py311_pandas_153.layer_arn
+    py311_pillow_1211_arn       = module.py311_pillow_1211.layer_arn
+    py311_rasterio_143_arn      = module.py311_rasterio_143.layer_arn
+    py311_shapely_185_arn       = module.py311_shapely_185.layer_arn
+
+#   py313_geopandas_112_arn     = module.py313_geopandas_112.layer_arn
+#   py313_mercantile_121_arn    = module.py313_mercantile_121.layer_arn
+#   py313_numpy_242_arn         = module.py313_numpy_242.layer_arn
+#   py313_pandas_233_arn        = module.py313_pandas_233.layer_arn
+#   py313_pillow_1210_arn       = module.py313_pillow_1210.layer_arn
+#   py313_rasterio_151_arn      = module.py313_rasterio_151.layer_arn
+#   py313_shapely_212_arn       = module.py313_shapely_212.layer_arn
   }
   lists = {}
   strings = {}
