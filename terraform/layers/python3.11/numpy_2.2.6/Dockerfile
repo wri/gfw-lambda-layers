@@ -21,12 +21,7 @@ RUN find python/ -type f -name '*.pyc' | while read f; do \
 RUN find python/ -type d -a -name '__pycache__' -print0 | xargs -0 rm -rf
 RUN find python/ -type f -a -name '*.py' -print0 | xargs -0 rm -f
 
-# Strip debug symbols from numpy's native extensions
-# Exclude OpenBLAS — it uses non-standard ELF alignment that strip corrupts
-RUN find python/ -name '*.so*' \
-    ! -name 'libscipy_openblas*' \
-    ! -name 'libopenblas*' \
-    -exec strip --strip-debug {} \;
+# Don't try to strip debug symbols, it's a world of hurt due to non-standard ELF alignment that strip corrupts
 
 COPY .lambdaignore .
 RUN grep -vE '^\s*#|^\s*$' .lambdaignore | xargs zip -9qyr layer.zip python -x

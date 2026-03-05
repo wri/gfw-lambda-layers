@@ -32,12 +32,7 @@ RUN rm -rf python/numpy \
 RUN python -m compileall -q python/ && \
     find python/ -type d -name '__pycache__' -print0 | xargs -0 rm -rf
 
-# Strip debug symbols
-# Exclude OpenBLAS — it uses non-standard ELF alignment that strip corrupts
-RUN find python/ -name '*.so*' \
-    ! -name 'libscipy_openblas*' \
-    ! -name 'libopenblas*' \
-    -exec strip --strip-debug {} \;
+# Don't try to strip debug symbols, it's a world of hurt due to non-standard ELF alignment that strip corrupts
 
 COPY .lambdaignore .
 RUN grep -vE '^\s*#|^\s*$' .lambdaignore | xargs zip -9qyr layer.zip python -x
