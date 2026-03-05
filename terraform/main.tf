@@ -109,7 +109,6 @@ module "py310_shapely_no_numpy" {
   layer_path     = "${path.root}/layers/python3.10/shapely_no_numpy/"
 }
 
-
 # These are new:
 module "py311_geopandas_112" {
   source         = "./modules/lambda_layer"
@@ -262,14 +261,6 @@ module "ssm" {
     py311_pillow_1211_arn       = module.py311_pillow_1211.layer_arn
     py311_rasterio_143_arn      = module.py311_rasterio_143.layer_arn
     py311_shapely_212_arn       = module.py311_shapely_212.layer_arn
-
-#   py313_geopandas_112_arn     = module.py313_geopandas_112.layer_arn
-#   py313_mercantile_121_arn    = module.py313_mercantile_121.layer_arn
-#   py313_numpy_242_arn         = module.py313_numpy_242.layer_arn
-#   py313_pandas_233_arn        = module.py313_pandas_233.layer_arn
-#   py313_pillow_1210_arn       = module.py313_pillow_1210.layer_arn
-#   py313_rasterio_151_arn      = module.py313_rasterio_151.layer_arn
-#   py313_shapely_212_arn       = module.py313_shapely_212.layer_arn
   }
   lists = {}
   strings = {}
