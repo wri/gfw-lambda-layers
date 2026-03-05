@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+LAYER_ROOT="${ROOT}/terraform/layers"
+
+# Build every layer that has a Dockerfile
+find "${LAYER_ROOT}" -name Dockerfile -print0 | while IFS= read -r -d '' df; do
+  layer_dir="$(dirname "$df")"
+  echo "=== Building layer in $layer_dir ==="
+  ( cd "$layer_dir" && bash "${ROOT}/terraform/modules/lambda_layer/scripts/build.sh" "$layer_dir" "local" )
+  test -s "${layer_dir}/layer.zip"
+  unzip -tq "${layer_dir}/layer.zip" >/dev/null
+done
