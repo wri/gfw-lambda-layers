@@ -9,10 +9,6 @@ jobs:
     steps:
     - uses: actions/checkout@v5
 
-    - name: Build layer zips
-      run: |
-        ./scripts/build_layers
-
     - name: Deploy production
       if: success() && github.ref == 'refs/heads/production'
       env:
@@ -21,6 +17,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_production }}
         AWS_REGION: ${{ secrets.aws_region_production }}
       run: |
+        ./scripts/build_layers
         ./scripts/infra plan
         ./scripts/infra apply
 
@@ -32,6 +29,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_staging }}
         AWS_REGION: ${{ secrets.aws_region_staging }}
       run: |
+        ./scripts/build_layers
         ./scripts/infra plan
         ./scripts/infra apply
 
@@ -43,5 +41,6 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_dev }}
         AWS_REGION: ${{ secrets.aws_region_dev }}
       run: |
+        ./scripts/build_layers
         ./scripts/infra plan
         ./scripts/infra apply
