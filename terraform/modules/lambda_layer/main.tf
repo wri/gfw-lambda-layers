@@ -3,7 +3,6 @@ locals {
   layer_path = trimsuffix(var.layer_path, "/")
 }
 
-# Hash all relevant build inputs so Terraform rebuilds only when sources change.
 data "external" "source_hash" {
   program = [
     coalesce(var.hash_script, "${path.module}/scripts/hash.sh"),
@@ -11,7 +10,6 @@ data "external" "source_hash" {
   ]
 }
 
-# Build the Docker image and copy ZIP file to local folder
 resource "null_resource" "build" {
   triggers = {
     source_hash = data.external.source_hash.result.hash
@@ -27,7 +25,7 @@ resource "aws_s3_object" "default" {
   bucket      = var.bucket
   key         = "lambda_layers/${local.layer_name}.zip"
   source      = "${local.layer_path}/layer.zip"
-  source_hash = filemd5("${local.layer_path}/layer.zip")
+  source_hash = null_resource.build.triggers["source_hash"]
 
   depends_on = [null_resource.build]
 }
@@ -37,5 +35,5 @@ resource "aws_lambda_layer_version" "default" {
   s3_bucket           = aws_s3_object.default.bucket
   s3_key              = aws_s3_object.default.key
   compatible_runtimes = [var.runtime]
-  source_code_hash    = filebase64sha256("${local.layer_path}/layer.zip")
+  source_code_hash    = base64sha256(null_resource.build.triggers["source_hash"])
 }
