@@ -9,6 +9,10 @@ jobs:
     steps:
     - uses: actions/checkout@v5
 
+    - name: Build layer zips
+      run: |
+        ./scripts/build_layers
+
     - name: Deploy production
       if: success() && github.ref == 'refs/heads/production'
       env:

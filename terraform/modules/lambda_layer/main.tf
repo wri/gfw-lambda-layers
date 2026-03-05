@@ -38,13 +38,10 @@ resource "null_resource" "build" {
 }
 
 resource "aws_s3_object" "default" {
-  bucket = var.bucket
-  key    = "lambda_layers/${local.layer_name}.zip"
-  source = lookup(data.external.touch.result, "source")
-
-  # Track the local file content without fighting S3's ETag semantics.
+  bucket      = var.bucket
+  key         = "lambda_layers/${local.layer_name}.zip"
+  source      = "${local.layer_path}/layer.zip"
   source_hash = filemd5("${local.layer_path}/layer.zip")
-  depends_on = [null_resource.build]
 }
 
 resource "aws_lambda_layer_version" "default" {
