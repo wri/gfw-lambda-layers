@@ -25,7 +25,7 @@ resource "aws_s3_object" "default" {
   bucket      = var.bucket
   key         = "lambda_layers/${local.layer_name}.zip"
   source      = "${local.layer_path}/layer.zip"
-  source_hash = null_resource.build.triggers["source_hash"]
+  source_hash = null_resource.build.triggers.source_hash
 
   depends_on = [null_resource.build]
 }
@@ -35,5 +35,5 @@ resource "aws_lambda_layer_version" "default" {
   s3_bucket           = aws_s3_object.default.bucket
   s3_key              = aws_s3_object.default.key
   compatible_runtimes = [var.runtime]
-  source_code_hash    = base64sha256(null_resource.build.triggers["source_hash"])
+  source_code_hash    = base64sha256(null_resource.build.triggers.source_hash)
 }
