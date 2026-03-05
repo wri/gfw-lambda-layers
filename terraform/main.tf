@@ -257,7 +257,7 @@ module "ssm" {
     py311_geopandas_112_arn     = module.py311_geopandas_112.layer_arn
     py311_mercantile_121_arn    = module.py311_mercantile_121.layer_arn
     py311_numpy_226_arn         = module.py311_numpy_226.layer_arn
-    py311_pandas_233            = module.py311_pandas_233.layer_arn
+    py311_pandas_233_arn        = module.py311_pandas_233.layer_arn
     py311_pillow_1211_arn       = module.py311_pillow_1211.layer_arn
     py311_rasterio_143_arn      = module.py311_rasterio_143.layer_arn
     py311_shapely_212_arn       = module.py311_shapely_212.layer_arn
