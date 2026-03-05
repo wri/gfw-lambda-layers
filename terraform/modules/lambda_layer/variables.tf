@@ -14,12 +14,6 @@ variable "hash_script" {
   default     = ""
 }
 
-variable "touch_script" {
-  description = "Path to script to touch layer ZIP"
-  type        = string
-  default     = ""
-}
-
 variable "build_script" {
   description = "Path to script to build Docker image and extract layer ZIP"
   type        = string

@@ -3,8 +3,7 @@ locals {
   layer_path = trimsuffix(var.layer_path, "/")
 }
 
-# Hash all relevant build inputs (not just the Dockerfile), so Terraform
-# rebuilds when dependency versions change (uv.lock/pyproject/etc).
+# Hash all relevant build inputs so Terraform rebuilds only when sources change.
 data "external" "source_hash" {
   program = [
     coalesce(var.hash_script, "${path.module}/scripts/hash.sh"),
@@ -12,29 +11,16 @@ data "external" "source_hash" {
   ]
 }
 
-data "local_file" "dockerfile" {
-  filename = "${local.layer_path}/Dockerfile"
-}
-
-# Calculate hash of the Docker image source contents
-data "external" "touch" {
-  program = [coalesce(var.touch_script, "${path.module}/scripts/touch.sh"), var.bucket, "lambda_layers/${local.layer_name}.zip", "${local.layer_path}/layer.zip"]
-}
-
 # Build the Docker image and copy ZIP file to local folder
 resource "null_resource" "build" {
   triggers = {
-    dockerfile_hash = filemd5(data.local_file.dockerfile.filename)
-    local_zip_md5   = data.external.touch.result.local_md5
-    downloaded      = data.external.touch.result.downloaded
+    source_hash = data.external.source_hash.result.hash
   }
 
   provisioner "local-exec" {
     command     = "${coalesce(var.build_script, "${path.module}/scripts/build.sh")} ${local.layer_path} ${local.layer_name}"
     interpreter = ["bash", "-c"]
   }
-
-  depends_on = [data.external.touch]
 }
 
 resource "aws_s3_object" "default" {
@@ -42,6 +28,8 @@ resource "aws_s3_object" "default" {
   key         = "lambda_layers/${local.layer_name}.zip"
   source      = "${local.layer_path}/layer.zip"
   source_hash = filemd5("${local.layer_path}/layer.zip")
+
+  depends_on = [null_resource.build]
 }
 
 resource "aws_lambda_layer_version" "default" {
