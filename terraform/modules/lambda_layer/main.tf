@@ -4,6 +4,13 @@ locals {
   source_hash = data.external.source_hash.result.hash
 }
 
+data "external" "source_hash" {
+  program = [
+    coalesce(var.hash_script, "${path.module}/scripts/hash.sh"),
+    local.layer_path
+  ]
+}
+
 resource "null_resource" "build" {
   triggers = {
     source_hash = local.source_hash
