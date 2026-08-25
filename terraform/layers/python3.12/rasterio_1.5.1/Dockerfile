@@ -4,7 +4,7 @@ RUN --mount=type=cache,target=/var/cache/dnf \
     dnf update -y && \
     dnf install -y \
       autoconf libtool flex bison cmake make \
-      tar gzip gcc gcc-c++ automake nasm libtirpc-devel \
+      tar gzip gcc gcc-c++ automake nasm \
       libxml2-devel openssl-devel curl-devel glibc-langpack-en && \
     dnf clean all
 
@@ -74,7 +74,7 @@ RUN mkdir zstd \
   && make install PREFIX=${PREFIX} ZSTD_LEGACY_SUPPORT=0 CFLAGS=-O1 \
   && rm -rf zstd
 
-# libjpeg-turbo (needed by libtiff, hdf4, openjpeg, gdal)
+# libjpeg-turbo (needed by libtiff, openjpeg, gdal)
 RUN mkdir jpeg \
   && curl -sfL https://github.com/libjpeg-turbo/libjpeg-turbo/archive/3.1.0.tar.gz | tar zxf - -C jpeg --strip-components=1 \
   && cd jpeg && mkdir build && cd build \
@@ -163,56 +163,6 @@ RUN mkdir blosc \
     -DDEACTIVATE_SNAPPY=OFF . \
   && make -j$(nproc) --silent && make install \
   && rm -rf blosc
-
-# szip (needed by hdf4, hdf5)
-RUN mkdir szip \
-  && curl -sfL https://support.hdfgroup.org/ftp/lib-external/szip/2.1.1/src/szip-2.1.1.tar.gz | tar zxf - -C szip --strip-components=1 \
-  && cd szip \
-  && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure --prefix=${PREFIX} --disable-static \
-  && make -j$(nproc) --silent && make install \
-  && rm -rf szip
-
-# hdf4 (needed by gdal for HDF4 format)
-RUN mkdir hdf4 \
-  && curl -sfL https://support.hdfgroup.org/ftp/HDF/releases/HDF4.2.15/src/hdf-4.2.15.tar | tar xvf - -C hdf4 --strip-components=1 \
-  && cd hdf4 \
-  && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" CPPFLAGS="-I/usr/include/tirpc" LIBS="-ltirpc" ./configure \
-    --prefix=${PREFIX} \
-    --with-szlib=${PREFIX} \
-    --with-jpeg=${PREFIX} \
-    --enable-shared \
-    --disable-static \
-    --disable-netcdf \
-    --disable-fortran \
-  && make -j$(nproc) --silent && make install \
-  && rm -rf hdf4
-
-# hdf5 (needed by netcdf, gdal)
-RUN mkdir hdf5 \
-  && curl -sfL https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.14/hdf5-1.14.6/src/hdf5-1.14.6.tar.gz | tar zxf - -C hdf5 --strip-components=1 \
-  && cd hdf5 \
-  && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
-    --prefix=${PREFIX} \
-    --with-szlib=${PREFIX} \
-    --enable-cxx \
-    --disable-static \
-  && make -j$(nproc) --silent && make install \
-  && rm -rf hdf5
-
-# netcdf (needed by gdal)
-RUN mkdir netcdf \
-  && curl -sfL https://github.com/Unidata/netcdf-c/archive/v4.9.3.tar.gz | tar zxf - -C netcdf --strip-components=1 \
-  && cd netcdf \
-  && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" CPPFLAGS="-I${PREFIX}/include" LDFLAGS="-L${PREFIX}/lib" ./configure \
-    --with-default-chunk-size=67108864 \
-    --with-chunk-cache-size=67108864 \
-    --prefix=${PREFIX} \
-    --disable-static \
-    --enable-netcdf4 \
-    --enable-dap \
-    --with-pic \
-  && make -j$(nproc) --silent && make install \
-  && rm -rf netcdf
 
 # cryptopp (needed by gdal for GCS access)
 RUN mkdir cryptopp \
@@ -373,6 +323,9 @@ RUN mkdir /tmp/gdal \
     -DGDAL_USE_TIFF_INTERNAL=OFF \
     -DGDAL_USE_GEOTIFF_INTERNAL=OFF \
     -DGDAL_USE_LERC_INTERNAL=OFF \
+    -DGDAL_USE_HDF4=OFF \
+    -DGDAL_USE_HDF5=OFF \
+    -DGDAL_USE_NETCDF=OFF \
     -DLERC_INCLUDE_DIR=${PREFIX}/include \
     -DLERC_LIBRARY=${PREFIX}/lib/libLercLib.so \
     -DPNG_PNG_INCLUDE_DIR=${PREFIX}/include \
@@ -439,9 +392,6 @@ RUN rm -f ${PREFIX}/lib/libturbojpeg.so* \
 # Fix RPATHs so libs are found relative to their location at runtime
 RUN for i in ${PREFIX}/bin/*;     do patchelf --force-rpath --set-rpath '$ORIGIN/../lib' "$i"; done && \
     for i in ${PREFIX}/lib/*.so*; do patchelf --force-rpath --set-rpath '$ORIGIN'        "$i" 2>/dev/null || true; done
-
-# hdf4 needs libtirpc at runtime
-RUN cp /usr/lib64/libtirpc.so* ${PREFIX}/lib/
 
 ENV GDAL_DATA=${PREFIX}/share/gdal \
     PROJ_LIB=${PREFIX}/share/proj \
