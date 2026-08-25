@@ -5,7 +5,7 @@ ENV MERCANTILE_VERSION=1.2.1
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN yum update && yum install -y binutils zip && yum clean all
+RUN yum update -y && yum install -y binutils zip && yum clean all
 
 RUN pip install --root-user-action=ignore mercantile==${MERCANTILE_VERSION} -t python
 

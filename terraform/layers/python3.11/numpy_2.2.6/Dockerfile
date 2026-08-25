@@ -5,7 +5,7 @@ FROM public.ecr.aws/lambda/python:3.11
 
 ENV NUMPY_VERSION="2.2.6"
 
-RUN yum update && yum install -y binutils zip && yum clean all
+RUN yum update -y && yum install -y binutils zip && yum clean all
 
 WORKDIR /opt
 RUN mkdir -p python
