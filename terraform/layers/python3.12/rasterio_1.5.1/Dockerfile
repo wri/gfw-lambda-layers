@@ -103,7 +103,7 @@ RUN mkdir libdeflate \
   && make -j$(nproc) --silent && make install \
   && rm -rf libdeflate
 
-# lerc (needed by libtiff, gdal)
+# lerc (needed by libtiff for its LERC TIFF codec; GDAL now builds LERC internally)
 RUN mkdir lerc \
   && curl -sfL https://github.com/Esri/lerc/archive/v4.0.4.tar.gz | tar zxf - -C lerc --strip-components=1 \
   && cd lerc \
@@ -116,7 +116,7 @@ RUN mkdir lerc \
   && make -j$(nproc) --silent && make install \
   && rm -rf lerc
 
-# libtiff (needed by geotiff, gdal)
+# libtiff (needed by gdal)
 RUN mkdir libtiff \
   && curl -sfL https://download.osgeo.org/libtiff/tiff-4.7.0.tar.gz | tar zxf - -C libtiff --strip-components=1 \
   && cd libtiff \
@@ -265,29 +265,6 @@ RUN mkdir /tmp/openjpeg \
 
 
 # ────────────────────────────────────────────────────────────────────────────────
-# STAGE: libgeotiff — depends on proj, libtiff (proj from parallel stage)
-# ────────────────────────────────────────────────────────────────────────────────
-FROM foundations AS build-geotiff
-COPY --from=build-proj ${PREFIX}/lib/ ${PREFIX}/lib/
-COPY --from=build-proj ${PREFIX}/include/ ${PREFIX}/include/
-COPY --from=build-proj ${PREFIX}/bin/ ${PREFIX}/bin/
-COPY --from=build-proj ${PREFIX}/share/ ${PREFIX}/share/
-
-RUN mkdir /tmp/libgeotiff \
-  && curl -sfL https://github.com/OSGeo/libgeotiff/releases/download/1.7.4/libgeotiff-1.7.4.tar.gz | tar zxf - -C /tmp/libgeotiff --strip-components=1 \
-  && cd /tmp/libgeotiff \
-  && LDFLAGS="-Wl,-rpath,'\$\$ORIGIN'" CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
-    --prefix=${PREFIX} \
-    --with-proj=${PREFIX} \
-    --with-jpeg=${PREFIX} \
-    --with-zip=yes \
-    --with-zlib \
-    --with-libtiff=${PREFIX} \
-  && make -j$(nproc) --silent && make install \
-  && rm -rf /tmp/libgeotiff
-
-
-# ────────────────────────────────────────────────────────────────────────────────
 # STAGE: GDAL — depends on everything
 # ────────────────────────────────────────────────────────────────────────────────
 FROM foundations AS build-gdal
@@ -305,10 +282,6 @@ COPY --from=build-proj    ${PREFIX}/share/   ${PREFIX}/share/
 COPY --from=build-openjpeg ${PREFIX}/lib/     ${PREFIX}/lib/
 COPY --from=build-openjpeg ${PREFIX}/include/ ${PREFIX}/include/
 
-COPY --from=build-geotiff  ${PREFIX}/lib/     ${PREFIX}/lib/
-COPY --from=build-geotiff  ${PREFIX}/include/ ${PREFIX}/include/
-COPY --from=build-geotiff  ${PREFIX}/bin/     ${PREFIX}/bin/
-
 RUN mkdir /tmp/gdal \
   && curl -sfL https://github.com/OSGeo/gdal/archive/refs/tags/v3.12.4.tar.gz | tar zxf - -C /tmp/gdal --strip-components=1 \
   && cd /tmp/gdal && mkdir build && cd build \
@@ -321,13 +294,11 @@ RUN mkdir /tmp/gdal \
     -DCMAKE_CXX_FLAGS="-O2 -Wl,-S" \
     -DGDAL_SET_INSTALL_RELATIVE_RPATH=ON \
     -DGDAL_USE_TIFF_INTERNAL=OFF \
-    -DGDAL_USE_GEOTIFF_INTERNAL=OFF \
-    -DGDAL_USE_LERC_INTERNAL=OFF \
+    -DGDAL_USE_GEOTIFF_INTERNAL=ON \
+    -DGDAL_USE_LERC_INTERNAL=ON \
     -DGDAL_USE_HDF4=OFF \
     -DGDAL_USE_HDF5=OFF \
     -DGDAL_USE_NETCDF=OFF \
-    -DLERC_INCLUDE_DIR=${PREFIX}/include \
-    -DLERC_LIBRARY=${PREFIX}/lib/libLercLib.so \
     -DPNG_PNG_INCLUDE_DIR=${PREFIX}/include \
     -DPNG_LIBRARY_RELEASE=${PREFIX}/lib/libpng.so \
     -DBUILD_PYTHON_BINDINGS=OFF \
