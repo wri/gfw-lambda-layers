@@ -5,9 +5,10 @@ ENV MERCANTILE_VERSION="1.2.1"
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN yum update && yum install -y binutils zip && yum clean all
+RUN dnf update -y && \
+    dnf install -y zip findutils
 
-RUN pip install --root-user-action=ignore mercantile==${MERCANTILE_VERSION} -t python
+RUN pip install --root-user-action=ignore "mercantile==${MERCANTILE_VERSION}" -t python
 
 # Precompile all Python source and strip __pycache__ dirs
 RUN python -m compileall -q python/ && \

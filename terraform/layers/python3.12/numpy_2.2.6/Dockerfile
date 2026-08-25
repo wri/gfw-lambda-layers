@@ -5,10 +5,11 @@ FROM public.ecr.aws/lambda/python:3.12
 
 ENV NUMPY_VERSION="2.2.6"
 
-RUN yum update && yum install -y binutils zip && yum clean all
-
 WORKDIR /opt
 RUN mkdir -p python
+
+RUN dnf update -y && \
+    dnf install -y zip findutils
 
 RUN pip install --root-user-action=ignore "numpy==${NUMPY_VERSION}" -t python
 

@@ -1,24 +1,24 @@
 FROM public.ecr.aws/lambda/python:3.12
 
-ENV GEOPANDAS_VERSION="1.1.2" \
-    NUMPY_VERSION="2.2.6" \
-    SHAPELY_VERSION="2.1.2" \
-    PANDAS_VERSION="2.3.3"
-
-RUN yum update && yum install -y zip binutils && yum clean all
+ENV NUMPY_VERSION="2.2.6"
+ENV SHAPELY_VERSION="2.1.2"
+ENV PANDAS_VERSION="2.3.3"
+ENV GEOPANDAS_VERSION="1.1.2"
 
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN pip install --root-user-action=ignore --upgrade pip && \
-    pip install --root-user-action=ignore \
-      --only-binary pyproj,shapely,fiona \
-      --no-binary geopandas \
-      geopandas==${GEOPANDAS_VERSION} \
-      numpy==${NUMPY_VERSION} \
-      shapely==${SHAPELY_VERSION} \
-      pandas==${PANDAS_VERSION} \
-      -t python
+RUN dnf update -y && \
+    dnf install -y zip findutils
+
+RUN pip install --root-user-action=ignore \
+    --only-binary pyproj,shapely,fiona \
+    --no-binary geopandas \
+    "numpy==${NUMPY_VERSION}" \
+    "shapely==${SHAPELY_VERSION}" \
+    "pandas==${PANDAS_VERSION}" \
+    "geopandas==${GEOPANDAS_VERSION}" \
+    -t python
 
 # Remove packages that live in their own layers
 RUN rm -rf python/numpy \
