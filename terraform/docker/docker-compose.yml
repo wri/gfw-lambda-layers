@@ -1,5 +1,6 @@
 services:
   terraform:
+    platform: linux/amd64
     image: globalforestwatch/terraform:v0.13.3
     volumes:
       - ../../:/usr/local/src
@@ -10,6 +11,5 @@ services:
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
       - AWS_REGION=us-east-1
-      - AWS_PROFILE
     working_dir: /usr/local/src
     entrypoint: infra
