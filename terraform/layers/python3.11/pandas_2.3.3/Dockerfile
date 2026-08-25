@@ -6,7 +6,7 @@ ENV NUMPY_VERSION="2.2.6" \
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN yum update && yum install -y binutils zip && yum clean all
+RUN yum update -y && yum install -y binutils zip && yum clean all
 
 RUN pip install --root-user-action=ignore --only-binary pandas "numpy==${NUMPY_VERSION}" "pandas==${PANDAS_VERSION}" -t python
 
