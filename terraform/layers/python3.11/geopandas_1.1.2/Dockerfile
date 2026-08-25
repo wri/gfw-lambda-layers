@@ -5,7 +5,7 @@ ENV GEOPANDAS_VERSION="1.1.2" \
     SHAPELY_VERSION="2.1.2" \
     PANDAS_VERSION="2.3.3"
 
-RUN yum update && yum install -y zip binutils && yum clean all
+RUN yum update -y && yum install -y zip binutils && yum clean all
 
 WORKDIR /opt
 RUN mkdir -p python
