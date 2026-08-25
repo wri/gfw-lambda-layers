@@ -1,7 +1,7 @@
 FROM public.ecr.aws/lambda/python:3.12
 
 ENV NUMPY_VERSION="2.2.6" \
-    PYAML_VERSION="6.0.1" \
+    PYYAML_VERSION="6.0.1" \
     SHAPELY_VERSION="2.1.2"
 
 WORKDIR /opt
