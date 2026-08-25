@@ -6,7 +6,7 @@ ENV UV_VERSION="0.10.8" \
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN yum install -y curl gzip make tar zip && yum clean all
+RUN yum update -y && yum install -y curl gzip make tar zip && yum clean all
 
 # Build SQLite from source — sqlite3_trace_v2 requires >= 3.14.0
 RUN mkdir /tmp/sqlite \
