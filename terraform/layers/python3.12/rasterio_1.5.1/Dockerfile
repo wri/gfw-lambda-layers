@@ -5,7 +5,8 @@ RUN --mount=type=cache,target=/var/cache/dnf \
     dnf install -y \
       autoconf libtool flex bison cmake make \
       tar gzip gcc gcc-c++ automake nasm \
-      libxml2-devel openssl-devel curl-devel glibc-langpack-en && \
+      libxml2-devel openssl-devel curl-devel glibc-langpack-en \
+      perl-core && \
     dnf clean all
 
 ENV LOCALE="en_US.UTF-8"
@@ -35,7 +36,7 @@ RUN mkdir pkg-config \
 
 # sqlite (needed by proj, gdal)
 RUN mkdir sqlite \
-  && curl -sfL https://www.sqlite.org/2026/sqlite-autoconf-3510200.tar.gz | tar zxf - -C sqlite --strip-components=1 \
+  && curl -sfL https://www.sqlite.org/2026/sqlite-autoconf-3530400.tar.gz | tar zxf - -C sqlite --strip-components=1 \
   && cd sqlite \
   && CFLAGS="-O2 -Wl,-S -DSQLITE_ENABLE_RTREE=1" CXXFLAGS="-O2 -Wl,-S -DSQLITE_ENABLE_RTREE=1" \
      ./configure --prefix=${PREFIX} --disable-static \
@@ -62,7 +63,7 @@ RUN mkdir nghttp2 \
 RUN mkdir libcurl \
   && curl -sfL https://curl.se/download/curl-8.12.1.tar.gz | tar zxf - -C libcurl --strip-components=1 \
   && cd libcurl \
-  && ./configure --disable-manual --disable-cookies --with-nghttp2=${PREFIX} --prefix=${PREFIX} \
+  && ./configure --disable-manual --disable-cookies --with-openssl --with-nghttp2=${PREFIX} --prefix=${PREFIX} \
   && make -j$(nproc) --silent && make install \
   && rm -rf libcurl
 
@@ -70,8 +71,8 @@ RUN mkdir libcurl \
 RUN mkdir zstd \
   && curl -sfL https://github.com/facebook/zstd/archive/v1.5.7.tar.gz | tar zxf - -C zstd --strip-components=1 \
   && cd zstd \
-  && make -j$(nproc) PREFIX=${PREFIX} ZSTD_LEGACY_SUPPORT=0 CFLAGS=-O1 --silent \
-  && make install PREFIX=${PREFIX} ZSTD_LEGACY_SUPPORT=0 CFLAGS=-O1 \
+  && make -j$(nproc) PREFIX=${PREFIX} ZSTD_LEGACY_SUPPORT=0 CFLAGS="-O1 -fPIC" --silent \
+  && make install PREFIX=${PREFIX} ZSTD_LEGACY_SUPPORT=0 CFLAGS="-O1 -fPIC" \
   && rm -rf zstd
 
 # libjpeg-turbo (needed by libtiff, openjpeg, gdal)
@@ -89,7 +90,7 @@ RUN mkdir jpeg \
 
 # libpng (needed by gdal)
 RUN mkdir png \
-  && curl -sfL https://github.com/glennrp/libpng/archive/v1.6.47.tar.gz | tar zxf - -C png --strip-components=1 \
+  && curl -sfL https://download.sourceforge.net/libpng/libpng-1.6.58.tar.gz | tar zxf - -C png --strip-components=1 \
   && cd png \
   && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure --prefix=${PREFIX} \
   && make -j$(nproc) --silent && make install \
@@ -97,7 +98,7 @@ RUN mkdir png \
 
 # libdeflate (needed by libtiff)
 RUN mkdir libdeflate \
-  && curl -sfL https://github.com/ebiggers/libdeflate/archive/v1.23.tar.gz | tar zxf - -C libdeflate --strip-components=1 \
+  && curl -sfL https://github.com/ebiggers/libdeflate/archive/v1.26.tar.gz | tar zxf - -C libdeflate --strip-components=1 \
   && cd libdeflate && mkdir build && cd build \
   && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${PREFIX} -DCMAKE_INSTALL_LIBDIR=lib \
   && make -j$(nproc) --silent && make install \
@@ -105,7 +106,7 @@ RUN mkdir libdeflate \
 
 # lerc (needed by libtiff for its LERC TIFF codec; GDAL now builds LERC internally)
 RUN mkdir lerc \
-  && curl -sfL https://github.com/Esri/lerc/archive/v4.0.4.tar.gz | tar zxf - -C lerc --strip-components=1 \
+  && curl -sfL https://github.com/Esri/lerc/archive/refs/tags/v4.1.1.tar.gz | tar zxf - -C lerc --strip-components=1 \
   && cd lerc \
   && cmake . \
     -DCMAKE_BUILD_TYPE=Release \
@@ -118,7 +119,7 @@ RUN mkdir lerc \
 
 # libtiff (needed by gdal)
 RUN mkdir libtiff \
-  && curl -sfL https://download.osgeo.org/libtiff/tiff-4.7.0.tar.gz | tar zxf - -C libtiff --strip-components=1 \
+  && curl -sfL https://download.osgeo.org/libtiff/tiff-4.7.2.tar.gz | tar zxf - -C libtiff --strip-components=1 \
   && cd libtiff \
   && LDFLAGS="-Wl,-rpath,'\$\$ORIGIN'" CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
     --prefix=${PREFIX} \
@@ -187,7 +188,7 @@ RUN mkdir brotli \
 
 # libpq only (needed by gdal for PostGIS — no need for the full server)
 RUN mkdir postgres \
-  && curl -sfL https://ftp.postgresql.org/pub/source/v17.4/postgresql-17.4.tar.gz | tar zxf - -C postgres --strip-components=1 \
+  && curl -sfL https://ftp.postgresql.org/pub/source/v17.11/postgresql-17.11.tar.gz | tar zxf - -C postgres --strip-components=1 \
   && cd postgres \
   && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
     --prefix=${PREFIX} \
@@ -302,15 +303,16 @@ RUN mkdir /tmp/gdal \
     -DPNG_PNG_INCLUDE_DIR=${PREFIX}/include \
     -DPNG_LIBRARY_RELEASE=${PREFIX}/lib/libpng.so \
     -DBUILD_PYTHON_BINDINGS=OFF \
-  && cmake --build . -j$(nproc) \
+  && cmake --build . -j$(( $(nproc) > 4 ? 4 : $(nproc) )) \
   && cmake --build . --target install \
   && rm -rf /tmp/gdal
 
 
 # ────────────────────────────────────────────────────────────────────────────────
-# STAGE: patchelf + Python — run in parallel with GDAL build
+# STAGE: patchelf + Python — must come after GDAL, since rasterio's
+#        from-source build needs gdal-config/libgdal already present
 # ────────────────────────────────────────────────────────────────────────────────
-FROM foundations AS build-python
+FROM build-gdal AS build-python
 
 # patchelf
 RUN mkdir /tmp/patchelf \
@@ -323,7 +325,8 @@ ENV USR_LOCAL_BIN="/usr/local/bin"
 ENV UV_LINK_MODE=copy \
     UV_COMPILE_BYTECODE=1 \
     UV_UNMANAGED_INSTALL=${USR_LOCAL_BIN} \
-    PATH=${USR_LOCAL_BIN}:${PATH}
+    PATH=${USR_LOCAL_BIN}:${PATH} \
+    GDAL_CONFIG=${PREFIX}/bin/gdal-config
 
 RUN curl -LsSf https://github.com/astral-sh/uv/releases/download/0.12.5/uv-installer.sh | sh && \
     uv pip install \
