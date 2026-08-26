@@ -1,7 +1,9 @@
 services:
   terraform:
     platform: linux/amd64
-    image: globalforestwatch/terraform:v0.13.3
+    build:
+      context: .
+    image: globalforestwatch/terraform-buildx:v0.13.3
     volumes:
       - ../../:/usr/local/src
       - $HOME/.aws:/root/.aws:ro
