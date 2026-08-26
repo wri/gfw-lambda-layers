@@ -12,7 +12,7 @@ CONTAINER_NAME="container_$(sha1sum ${LAYER_PATH}/foo.txt |cut -c 1-8)"
 pushd "${LAYER_PATH}"
 
 echo "BUILD image ${IMAGE}"
-docker build --no-cache -t "${IMAGE}"  . --platform=linux/amd64
+DOCKER_BUILDKIT=1 docker build --no-cache -t "${IMAGE}" . --platform=linux/amd64
 
 echo "CREATE container ${CONTAINER_NAME}"
 docker run -itd --name "${CONTAINER_NAME}" "${IMAGE}" /bin/bash
