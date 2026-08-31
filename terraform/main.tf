@@ -137,13 +137,13 @@ module "py311_numpy_226" {
   layer_path     = "${path.root}/layers/python3.11/numpy_2.2.6/"
 }
 
-module "py311_pandas_233" {
+module "py311_pandas_232" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
   name           = "pandas"
-  module_version = "2.3.3"
+  module_version = "2.3.2"
   runtime        = "python3.11"
-  layer_path     = "${path.root}/layers/python3.11/pandas_2.3.3/"
+  layer_path     = "${path.root}/layers/python3.11/pandas_2.3.2/"
 }
 
 module "py311_pillow_1211" {
@@ -201,13 +201,13 @@ module "py312_numpy_226" {
   layer_path     = "${path.root}/layers/python3.12/numpy_2.2.6/"
 }
 
-module "py312_pandas_233" {
+module "py312_pandas_232" {
   source         = "./modules/lambda_layer"
   bucket         = local.core.gfw_pipelines_bucket_name
   name           = "pandas"
-  module_version = "2.3.3"
+  module_version = "2.3.2"
   runtime        = "python3.12"
-  layer_path     = "${path.root}/layers/python3.12/pandas_2.3.3/"
+  layer_path     = "${path.root}/layers/python3.12/pandas_2.3.2/"
 }
 
 module "py312_pillow_1211" {
@@ -256,7 +256,7 @@ module "ssm" {
     py311_geopandas_112_arn     = module.py311_geopandas_112.layer_arn
     py311_mercantile_121_arn    = module.py311_mercantile_121.layer_arn
     py311_numpy_226_arn         = module.py311_numpy_226.layer_arn
-    py311_pandas_233_arn        = module.py311_pandas_233.layer_arn
+    py311_pandas_232_arn        = module.py311_pandas_232.layer_arn
     py311_pillow_1211_arn       = module.py311_pillow_1211.layer_arn
     py311_rasterio_143_arn      = module.py311_rasterio_143.layer_arn
     py311_shapely_212_arn       = module.py311_shapely_212.layer_arn
@@ -264,7 +264,7 @@ module "ssm" {
     py312_geopandas_112_arn     = module.py312_geopandas_112.layer_arn
     py312_mercantile_121_arn    = module.py312_mercantile_121.layer_arn
     py312_numpy_226_arn         = module.py312_numpy_226.layer_arn
-    py312_pandas_233_arn        = module.py312_pandas_233.layer_arn
+    py312_pandas_232_arn        = module.py312_pandas_232.layer_arn
     py312_pillow_1211_arn       = module.py312_pillow_1211.layer_arn
     py312_rasterio_151_arn      = module.py312_rasterio_151.layer_arn
     py312_shapely_212_arn       = module.py312_shapely_212.layer_arn

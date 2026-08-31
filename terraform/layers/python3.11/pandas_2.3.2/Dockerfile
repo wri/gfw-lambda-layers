@@ -1,15 +1,14 @@
-FROM public.ecr.aws/lambda/python:3.12
+FROM public.ecr.aws/lambda/python:3.11
 
 ENV NUMPY_VERSION="2.2.6" \
-    PANDAS_VERSION="2.3.3"
+    PANDAS_VERSION="2.3.2"
 
 WORKDIR /opt
 RUN mkdir -p python
 
-RUN dnf update -y && \
-    dnf install -y zip findutils
+RUN yum update -y && yum install -y binutils zip && yum clean all
 
-RUN pip install --root-user-action=ignore "numpy==${NUMPY_VERSION}" "pandas==${PANDAS_VERSION}" -t python
+RUN pip install --root-user-action=ignore --only-binary pandas "numpy==${NUMPY_VERSION}" "pandas==${PANDAS_VERSION}" -t python
 
 # Precompile all Python source and strip __pycache__ dirs
 RUN python -m compileall -q python/ && \
