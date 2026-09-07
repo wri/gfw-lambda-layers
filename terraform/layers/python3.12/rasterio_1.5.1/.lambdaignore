@@ -13,10 +13,8 @@ python/rasterio/gdal_data/*
 python/rasterio/*.pyx
 python/rasterio/*.pxi
 
-# NumPy (runtime .so files are needed, but tests/docs are not)
-python/numpy/core/tests/*
-python/numpy/testing/*
-python/numpy/tests/*
+# NumPy lives in its own layer
+python/numpy/*
 python/numpy.libs/*
 
 # Compile-time only artifacts

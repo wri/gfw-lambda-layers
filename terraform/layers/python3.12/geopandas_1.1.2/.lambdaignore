@@ -13,3 +13,7 @@ python/pandas/*
 python/pandas.libs/*
 python/shapely/*
 python/shapely.libs/*
+
+# pyproj is provided by the raster_analysis application layer (i.e. installed by uv)
+python/pyproj/*
+python/pyproj.libs/*

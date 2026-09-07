@@ -2,7 +2,7 @@ FROM public.ecr.aws/lambda/python:3.12
 
 ENV NUMPY_VERSION="2.2.6"
 ENV SHAPELY_VERSION="2.1.2"
-ENV PANDAS_VERSION="2.3.3"
+ENV PANDAS_VERSION="2.3.2"
 ENV GEOPANDAS_VERSION="1.1.2"
 
 WORKDIR /opt
@@ -22,11 +22,13 @@ RUN pip install --root-user-action=ignore \
 
 # Remove packages that live in their own layers
 RUN rm -rf python/numpy \
-           python/numpy.libs \
-           python/pandas \
-           python/pandas.libs \
-           python/shapely \
-           python/shapely.libs
+    python/numpy.libs \
+    python/pandas \
+    python/pandas.libs \
+    python/shapely \
+    python/shapely.libs \
+    python/pyproj \
+    python/pyproj.libs
 
 # Precompile, remove cache dirs to shrink the layer
 RUN python -m compileall -q python/ && \

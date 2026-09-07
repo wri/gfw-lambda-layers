@@ -303,7 +303,7 @@ RUN mkdir /tmp/gdal \
     -DPNG_PNG_INCLUDE_DIR=${PREFIX}/include \
     -DPNG_LIBRARY_RELEASE=${PREFIX}/lib/libpng.so \
     -DBUILD_PYTHON_BINDINGS=OFF \
-  && cmake --build . -j$(( $(nproc) > 4 ? 4 : $(nproc) )) \
+  && cmake --build . -j$(( $(nproc) > 3 ? 3 : $(nproc) )) \
   && cmake --build . --target install \
   && rm -rf /tmp/gdal
 
@@ -368,13 +368,9 @@ RUN for i in ${PREFIX}/bin/*;     do patchelf --force-rpath --set-rpath '$ORIGIN
     for i in ${PREFIX}/lib/*.so*; do patchelf --force-rpath --set-rpath '$ORIGIN'        "$i" 2>/dev/null || true; done
 
 ENV GDAL_DATA=${PREFIX}/share/gdal \
-    PROJ_LIB=${PREFIX}/share/proj \
-    GDAL_CONFIG=${PREFIX}/bin/gdal-config \
-    GEOS_CONFIG=${PREFIX}/bin/geos-config \
-    PATH=${PREFIX}/bin:${PATH}
+    PROJ_LIB=${PREFIX}/share/proj
 
 # Compress all files except those listed in .lambdaignore
 COPY .lambdaignore .
 RUN cat .lambdaignore | xargs zip -r9q layer.zip python -x && \
-    cat .lambdaignore | xargs zip -r9q --symlinks layer.zip lib/*.so* share -x && \
-    zip -r9q --symlinks layer.zip bin/gdal* bin/ogr* bin/geos* bin/nearblack
+    cat .lambdaignore | xargs zip -r9q --symlinks layer.zip lib/*.so* share -x
