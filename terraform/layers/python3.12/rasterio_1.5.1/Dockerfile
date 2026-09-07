@@ -303,7 +303,7 @@ RUN mkdir /tmp/gdal \
     -DPNG_PNG_INCLUDE_DIR=${PREFIX}/include \
     -DPNG_LIBRARY_RELEASE=${PREFIX}/lib/libpng.so \
     -DBUILD_PYTHON_BINDINGS=OFF \
-  && cmake --build . -j$(( $(nproc) > 4 ? 4 : $(nproc) )) \
+  && cmake --build . -j$(( $(nproc) > 3 ? 3 : $(nproc) )) \
   && cmake --build . --target install \
   && rm -rf /tmp/gdal
 

@@ -1,8 +1,5 @@
 FROM public.ecr.aws/lambda/python:3.12
 
-# Cap numpy at 2.2.x — the last series with manylinux2014 wheels, so it installs
-# cleanly on the AL2 base ^
-
 ENV NUMPY_VERSION="2.2.6"
 
 WORKDIR /opt
