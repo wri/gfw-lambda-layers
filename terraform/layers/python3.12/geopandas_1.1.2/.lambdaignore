@@ -1,0 +1,19 @@
+# Packaging metadata
+*-info/*
+*/tests/*
+python/pip/*
+python/pkg_resources/*
+python/setuptools/*
+python/wheel/*
+
+# These packages live in their own layers
+python/numpy/*
+python/numpy.libs/*
+python/pandas/*
+python/pandas.libs/*
+python/shapely/*
+python/shapely.libs/*
+
+# pyproj is provided by the raster_analysis application layer (i.e. installed by uv)
+python/pyproj/*
+python/pyproj.libs/*

@@ -1,0 +1,34 @@
+# Python stdlib-ish / packaging noise
+*-info/*
+*/tests/*
+python/pip/*
+python/pkg_resources/*
+python/setuptools/*
+python/wheel/*
+python/easy_install/*
+
+# Rasterio runtime bloat
+python/rasterio/tests/*
+python/rasterio/gdal_data/*
+python/rasterio/*.pyx
+python/rasterio/*.pxi
+
+# NumPy lives in its own layer
+python/numpy/*
+python/numpy.libs/*
+
+# Compile-time only artifacts
+lib/pkgconfig/*
+lib/*.a
+include/*
+
+# Documentation / metadata
+share/doc/*
+share/man/*
+share/gtk-doc/*
+share/bash-completion/*
+share/aclocal/*
+share/cryptopp/*
+
+# PROJ: test grids not needed at runtime
+share/proj/tests/*
